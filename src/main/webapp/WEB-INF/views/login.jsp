@@ -1,26 +1,27 @@
-<%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@ page contentType="text/html;charset=UTF-8"%>
 <html>
 <head>
     <title>Login</title>
+    <link rel="stylesheet" href="<%= request.getContextPath() %>/assets/css/style.css" />
+    <script src="<%= request.getContextPath() %>/assets/js/script.js" defer></script>
 </head>
 <body>
-<h2>Login</h2>
+<div class="login-container">
+    <h2>Login to Pahan Edu</h2>
 
-<form action="login" method="post">
-    <label>Username:<br>
-        <input type="text" name="username" required>
-    </label>
+    <form action="<%= request.getContextPath() %>/login" method="post">
+        <label>
+            <input type="text" name="username" placeholder="Username" required />
+        </label>
+        <label>
+            <input type="password" name="password" placeholder="Password" required />
+        </label>
+        <button type="submit">Login</button>
+    </form>
 
-    <label>Password:<br>
-    <input type="password" name="password" required><br><br>
-    </label>
-
-    <button type="submit">Login</button>
-</form>
-
-<p style="color:red;">
-    <%= request.getAttribute("error") != null ? request.getAttribute("error") : "" %>
-</p>
+    <p class="error-message">
+        <%= request.getAttribute("error") != null ? request.getAttribute("error") : "" %>
+    </p>
+</div>
 </body>
 </html>
-
