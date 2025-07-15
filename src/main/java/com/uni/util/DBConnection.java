@@ -14,19 +14,20 @@ public class DBConnection {
 
     public static Connection getConnection() throws SQLException {
         if (connection == null || connection.isClosed()) {
-            try(InputStream input = DBConnection.class.getClassLoader()
-                    .getResourceAsStream("application.properties")) {
-                Properties prop = new Properties();
-                prop.load(input);
+//            try(InputStream input = DBConnection.class.getClassLoader()
+//                    .getResourceAsStream("application.properties")) {
+//                Properties prop = new Properties();
+//                prop.load(input);
+//
+//                String url = prop.getProperty("db.url");
+//                String username = prop.getProperty("db.username");
+//                String password = prop.getProperty("db.password");
 
-                String url = prop.getProperty("db.url");
-                String username = prop.getProperty("db.username");
-                String password = prop.getProperty("db.password");
-
-                connection = DriverManager.getConnection(url, username, password);
-            } catch (Exception ex) {
-                throw new SQLException("Unable to load DB configuration:" , ex.getMessage(), ex);
-            }
+//                connection = DriverManager.getConnection(url, username, password);
+                connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/pahan_edu", "root", "");
+//            } catch (Exception ex) {
+//                throw new SQLException("Unable to load DB configuration:" , ex.getMessage(), ex);
+//            }
         }
         return connection;
     }
