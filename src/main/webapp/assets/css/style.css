@@ -7,6 +7,7 @@ body {
     justify-content: center;
     align-items: center;
     height: 100vh;
+    color: #f5f5f5;
 }
 
 .login-container.dark-theme {
@@ -120,3 +121,25 @@ button:hover {
 .logout-button:hover {
     background-color: #c0392b;
 }
+
+table, th, td {
+    color: #f5f5f5;
+    border-color: #444; /* lighter border for visibility */
+}
+
+input, label {
+    color: #f5f5f5;
+}
+
+/* If inputs have dark background */
+input {
+    background-color: #2c2c2c;
+    border: 1px solid #555;
+    color: #f5f5f5;
+}
+
+/* For forms and headings */
+h1, h2, label {
+    color: #f5f5f5;
+}
+
