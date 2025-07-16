@@ -1,3 +1,10 @@
+## [0.2.0] - 2025-07-17
+### Added
+- New `customers` table
+- Seed data for two sample customers
+
+---
+
 ## [0.1.0] - 2025-07-16
 ### Added
 - Session-based login and logout functionality
