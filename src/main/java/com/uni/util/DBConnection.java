@@ -10,10 +10,17 @@ public class DBConnection {
 
     private static Connection connection;
 
-    private DBConnection() {}
+    private DBConnection() {
+    }
 
     public static Connection getConnection() throws SQLException {
         if (connection == null || connection.isClosed()) {
+            try {
+                // Load the MySQL JDBC driver
+                Class.forName("com.mysql.cj.jdbc.Driver");
+            } catch (ClassNotFoundException e) {
+                throw new SQLException("MySQL JDBC Driver not found.", e);
+            }
             try(InputStream input = DBConnection.class.getClassLoader()
                     .getResourceAsStream("application.properties")) {
                 Properties prop = new Properties();
@@ -27,7 +34,7 @@ public class DBConnection {
             } catch (Exception ex) {
                 throw new SQLException("Unable to load DB configuration:" , ex.getMessage(), ex);
             }
+            }
+            return connection;
         }
-        return connection;
     }
-}
