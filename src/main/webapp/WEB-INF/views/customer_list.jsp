@@ -1,11 +1,10 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
-
 <%@ page import="com.uni.dto.CustomerDTO" %>
 <%@ page import="java.util.List" %>
 <html>
 <head>
   <title>Customers - Pahan Edu</title>
-<%--  <link rel="stylesheet" href="<%= request.getContextPath() %>/assets/css/style.css" />--%>
+  <link rel="stylesheet" href="<%= request.getContextPath() %>/assets/css/style.css" />
 </head>
 <body>
 <h1>Customer List</h1>
@@ -14,12 +13,12 @@
   String error = (String) request.getAttribute("error");
   if (error != null && !error.isEmpty()) {
 %>
-<div style="color:red;"><%= error %></div>
+<div class="error"><%= error %></div>
 <%
   }
 %>
 
-<table border="1" cellpadding="8" cellspacing="0">
+<table>
   <thead>
   <tr>
     <th>ID</th>
@@ -27,7 +26,7 @@
     <th>Name</th>
     <th>Address</th>
     <th>Phone</th>
-    <th>Units Consumed</th>
+    <th>Units</th>
     <th>Actions</th>
   </tr>
   </thead>
@@ -63,11 +62,21 @@
 <h2>Add New Customer</h2>
 <form action="<%= request.getContextPath() %>/customers" method="post">
   <input type="hidden" name="action" value="add"/>
-  <label>Account Number: <input type="text" name="accountNumber" required/></label><br/>
-  <label>Name: <input type="text" name="name" required/></label><br/>
-  <label>Address: <input type="text" name="address"/></label><br/>
-  <label>Phone: <input type="text" name="phone"/></label><br/>
-  <label>Units Consumed: <input type="number" name="unitsConsumed" min="0" value="0"/></label><br/>
+  <label>Account Number:
+    <input type="text" name="accountNumber" required/>
+  </label><br/>
+  <label>Name:
+    <input type="text" name="name" required/>
+  </label><br/>
+  <label>Address:
+    <input type="text" name="address"/>
+  </label><br/>
+  <label>Phone:
+    <input type="text" name="phone"/>
+  </label><br/>
+  <label>Units Consumed:
+    <input type="number" name="unitsConsumed" min="0" value="0"/>
+  </label><br/>
   <button type="submit">Add Customer</button>
 </form>
 </body>
