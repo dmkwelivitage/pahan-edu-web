@@ -44,13 +44,20 @@
     <td><%= obj.getPhone() %></td>
     <td><%= obj.getUnitsConsumed() %></td>
     <td>
-      <a href="<%= request.getContextPath() %>/customers?id=<%= obj.getId() %>">Edit</a> |
-      <form action="<%= request.getContextPath() %>/customers" method="post" style="display:inline;">
-        <input type="hidden" name="action" value="delete"/>
-        <input type="hidden" name="id" value="<%= obj.getId() %>"/>
-        <button type="submit" onclick="return confirm('Delete this customer?');">Delete</button>
-      </form>
+      <div class="action-buttons">
+        <form action="<%= request.getContextPath() %>/customers" method="get" style="display:inline;">
+          <input type="hidden" name="id" value="<%= obj.getId() %>"/>
+          <button type="submit" class="edit-button">Edit</button>
+        </form>
+
+        <form action="<%= request.getContextPath() %>/customers" method="post" style="display:inline;">
+          <input type="hidden" name="action" value="delete"/>
+          <input type="hidden" name="id" value="<%= obj.getId() %>"/>
+          <button type="submit" class="delete-button" onclick="return confirm('Delete this customer?');">Delete</button>
+        </form>
+      </div>
     </td>
+
   </tr>
   <%
       }
