@@ -7,3 +7,14 @@ CREATE TABLE IF NOT EXISTS users (
      role VARCHAR(20) NOT NULL,
      created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
+
+CREATE TABLE IF NOT EXISTS customers (
+     id INT AUTO_INCREMENT PRIMARY KEY,
+     account_number VARCHAR(20) NOT NULL UNIQUE,
+     name VARCHAR(100) NOT NULL,
+     address TEXT,
+     phone VARCHAR(20),
+     units_consumed INT DEFAULT 0,
+     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+

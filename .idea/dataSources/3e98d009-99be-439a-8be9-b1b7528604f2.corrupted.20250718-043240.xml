@@ -97,7 +97,7 @@
 |root||root|localhost|grant option|G
 performance_schema|schema||mysql.session|localhost|SELECT|G
 sys|schema||mysql.sys|localhost|TRIGGER|G</Grants>
-      <ServerVersion>8.3.0</ServerVersion>
+      <ServerVersion>9.1.0</ServerVersion>
     </root>
     <collation id="2" parent="1" name="armscii8_bin">
       <Charset>armscii8</Charset>
@@ -1050,111 +1050,41 @@ sys|schema||mysql.sys|localhost|TRIGGER|G</Grants>
       <Host>localhost</Host>
       <Plugin>caching_sha2_password</Plugin>
     </user>
-    <table id="302" parent="291" name="customers">
+    <table id="302" parent="291" name="users">
       <DetailsLevel>3</DetailsLevel>
       <Engine>MyISAM</Engine>
       <CollationName>utf8mb4_0900_ai_ci</CollationName>
     </table>
-    <table id="303" parent="291" name="users">
-      <DetailsLevel>3</DetailsLevel>
-      <Engine>MyISAM</Engine>
-      <CollationName>utf8mb4_0900_ai_ci</CollationName>
-    </table>
-    <column id="304" parent="302" name="id">
+    <column id="303" parent="302" name="id">
       <AutoIncrement>1</AutoIncrement>
       <NotNull>1</NotNull>
       <Position>1</Position>
       <StoredType>int|0s</StoredType>
     </column>
-    <column id="305" parent="302" name="account_number">
+    <column id="304" parent="302" name="username">
       <NotNull>1</NotNull>
       <Position>2</Position>
-      <StoredType>varchar(20)|0s</StoredType>
+      <StoredType>varchar(225)|0s</StoredType>
     </column>
-    <column id="306" parent="302" name="name">
-      <NotNull>1</NotNull>
-      <Position>3</Position>
-      <StoredType>varchar(100)|0s</StoredType>
-    </column>
-    <column id="307" parent="302" name="address">
-      <Position>4</Position>
-      <StoredType>text|0s</StoredType>
-    </column>
-    <column id="308" parent="302" name="phone">
-      <Position>5</Position>
-      <StoredType>varchar(20)|0s</StoredType>
-    </column>
-    <column id="309" parent="302" name="units_consumed">
-      <DefaultExpression>0</DefaultExpression>
-      <Position>6</Position>
-      <StoredType>int|0s</StoredType>
-    </column>
-    <column id="310" parent="302" name="created_at">
-      <DefaultExpression>CURRENT_TIMESTAMP</DefaultExpression>
-      <Position>7</Position>
-      <StoredType>timestamp|0s</StoredType>
-    </column>
-    <index id="311" parent="302" name="PRIMARY">
-      <ColNames>id</ColNames>
-      <Type>btree</Type>
-      <Unique>1</Unique>
-    </index>
-    <index id="312" parent="302" name="account_number">
-      <ColNames>account_number</ColNames>
-      <Type>btree</Type>
-      <Unique>1</Unique>
-    </index>
-    <key id="313" parent="302" name="PRIMARY">
-      <NameSurrogate>1</NameSurrogate>
-      <Primary>1</Primary>
-      <UnderlyingIndexName>PRIMARY</UnderlyingIndexName>
-    </key>
-    <key id="314" parent="302" name="account_number">
-      <UnderlyingIndexName>account_number</UnderlyingIndexName>
-    </key>
-    <column id="315" parent="303" name="id">
-      <AutoIncrement>1</AutoIncrement>
-      <NotNull>1</NotNull>
-      <Position>1</Position>
-      <StoredType>int|0s</StoredType>
-    </column>
-    <column id="316" parent="303" name="username">
-      <NotNull>1</NotNull>
-      <Position>2</Position>
-      <StoredType>varchar(50)|0s</StoredType>
-    </column>
-    <column id="317" parent="303" name="password">
+    <column id="305" parent="302" name="password">
       <NotNull>1</NotNull>
       <Position>3</Position>
       <StoredType>varchar(225)|0s</StoredType>
     </column>
-    <column id="318" parent="303" name="role">
+    <column id="306" parent="302" name="role">
       <NotNull>1</NotNull>
       <Position>4</Position>
-      <StoredType>varchar(20)|0s</StoredType>
+      <StoredType>varchar(225)|0s</StoredType>
     </column>
-    <column id="319" parent="303" name="created_at">
-      <DefaultExpression>CURRENT_TIMESTAMP</DefaultExpression>
-      <Position>5</Position>
-      <StoredType>timestamp|0s</StoredType>
-    </column>
-    <index id="320" parent="303" name="PRIMARY">
+    <index id="307" parent="302" name="PRIMARY">
       <ColNames>id</ColNames>
       <Type>btree</Type>
       <Unique>1</Unique>
     </index>
-    <index id="321" parent="303" name="username">
-      <ColNames>username</ColNames>
-      <Type>btree</Type>
-      <Unique>1</Unique>
-    </index>
-    <key id="322" parent="303" name="PRIMARY">
+    <key id="308" parent="302" name="PRIMARY">
       <NameSurrogate>1</NameSurrogate>
       <Primary>1</Primary>
       <UnderlyingIndexName>PRIMARY</UnderlyingIndexName>
-    </key>
-    <key id="323" parent="303" name="username">
-      <UnderlyingIndexName>username</UnderlyingIndexName>
     </key>
   </database-model>
 </dataSource>
