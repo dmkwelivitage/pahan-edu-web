@@ -1,3 +1,23 @@
+## [0.3.0] - 2025-07-18
+### Added
+- Full Customer CRUD implementation (Create, Read, Update, Delete)
+- `CustomerDTO`, `CustomerDAO`, `CustomerService`, and `CustomerServlet`
+- JSP pages for listing, adding, and editing customers
+- Improved action buttons for Edit and Delete with distinct styling
+- Dark-mode-compatible form elements and tables
+- Unit tests for CustomerService and DAO with JUnit lifecycle (setup/teardown)
+- SQL schema and initial seed data added under `db/sql/customers.sql`
+
+### Changed
+- Global CSS updated for consistent dark theme across all modules
+- Action buttons in customer list now styled for better UX
+
+### Notes
+- Merged into `dev` via squash commit
+- Feature branch deleted after PR merge
+
+---
+
 ## [0.2.0] - 2025-07-17
 ### Added
 - New `customers` table
