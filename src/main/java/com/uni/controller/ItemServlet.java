@@ -25,12 +25,12 @@ public class ItemServlet extends HttpServlet {
             int id = Integer.parseInt(idParam);
             ItemDTO item = itemService.getItemById(id);
             request.setAttribute("item", item);
-            request.getRequestDispatcher("/WEB-INF/views/items/edit.jsp").forward(request, response);
+            request.getRequestDispatcher("/WEB-INF/views/item_edit.jsp").forward(request, response);
         } else {
             // Fetch all items
             List<ItemDTO> items = itemService.getAllItems();
             request.setAttribute("items", items);
-            request.getRequestDispatcher("/WEB-INF/views/items/list.jsp").forward(request, response);
+            request.getRequestDispatcher("/WEB-INF/views/item_list.jsp").forward(request, response);
         }
     }
 

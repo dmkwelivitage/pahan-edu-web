@@ -1,27 +1,66 @@
-<%@ page contentType="text/html;charset=UTF-8"%>
+<%@ page contentType="text/html;charset=UTF-8" %>
 <%@ page import="com.uni.dto.UserDTO" %>
 <%
   UserDTO user = (UserDTO) request.getAttribute("user");
 %>
 <html>
 <head>
-  <title>Dashboard</title>
+  <title>Dashboard - Pahan Edu</title>
   <link rel="stylesheet" href="<%= request.getContextPath() %>/assets/css/style.css" />
   <style>
     .nav-links {
-      margin-top: 20px;
+      margin-top: 30px;
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 16px;
     }
-    .nav-links a {
-      margin-right: 15px;
-      padding: 8px 16px;
-      background-color: #007BFF;
-      color: white;
-      text-decoration: none;
-      border-radius: 4px;
-      font-weight: bold;
+
+    .nav-button {
+      padding: 12px 24px;
+      font-size: 16px;
+      background-color: #3a82f7;
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      min-width: 180px;
+      text-align: center;
     }
-    .nav-links a:hover {
-      background-color: #0056b3;
+
+    .nav-button:hover {
+      background-color: #2f6cd3;
+    }
+
+    .logout-button {
+      padding: 12px 24px;
+      font-size: 16px;
+      background-color: #e74c3c;
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+    }
+
+    .logout-button:hover {
+      background-color: #c0392b;
+    }
+
+    .user-info {
+      text-align: center;
+      margin-bottom: 30px;
+    }
+
+    .dashboard-container {
+      background-color: #1e1e1e;
+      padding: 40px;
+      border-radius: 12px;
+      box-shadow: 0 0 20px rgba(255, 255, 255, 0.05);
+      width: 90%;
+      max-width: 700px;
+      margin: 60px auto;
+      color: #f5f5f5;
+      text-align: center;
     }
   </style>
 </head>
@@ -33,11 +72,15 @@
   </div>
 
   <div class="nav-links">
-    <a href="<%= request.getContextPath() %>/customers">View Customers</a>
-    <a href="<%= request.getContextPath() %>/customers?action=addForm">Add New Customer</a>
+    <a href="<%= request.getContextPath() %>/customers">
+      <button class="nav-button">Manage Customers</button>
+    </a>
+    <a href="<%= request.getContextPath() %>/items">
+      <button class="nav-button">Manage Items</button>
+    </a>
   </div>
 
-  <form action="<%= request.getContextPath() %>/logout" method="post" style="margin-top: 30px;">
+  <form action="<%= request.getContextPath() %>/logout" method="post" style="margin-top: 40px;">
     <button class="logout-button" type="submit">Logout</button>
   </form>
 </div>
