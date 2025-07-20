@@ -1,4 +1,25 @@
-## [0.3.0] - 2025-07-18
+## [0.4.0] - 2025-07-20
+### Added
+- Full Item management module including model, DAO, service, DTO, and servlet.
+- CRUD operations for items: add, edit, delete, list.
+- JSP views for item management with improved dark-themed UI.
+- JUnit tests for ItemDAO and ItemService.
+- Dashboard updated with navigation to Items section.
+- SQL schema and seed data for items added under `/db/sql`.
+
+
+### Changed
+- Global CSS updated for consistent dark theme across all modules.
+- Action buttons in item list now styled for better UX.
+- Dashboard navigation updated to include Items.
+
+### Notes
+- Merged into `dev` via squash commit.
+- Feature branch deleted after PR merge.
+
+---
+
+## [0.3.0] - 2025-07-181
 ### Added
 - Full Customer CRUD implementation (Create, Read, Update, Delete)
 - `CustomerDTO`, `CustomerDAO`, `CustomerService`, and `CustomerServlet`
@@ -6,7 +27,7 @@
 - Improved action buttons for Edit and Delete with distinct styling
 - Dark-mode-compatible form elements and tables
 - Unit tests for CustomerService and DAO with JUnit lifecycle (setup/teardown)
-- SQL schema and initial seed data added under `db/sql/customers.sql`
+- SQL schema and initial seed data added under `sql/schema.sql` & `sql/seed_data.sql`
 
 ### Changed
 - Global CSS updated for consistent dark theme across all modules
