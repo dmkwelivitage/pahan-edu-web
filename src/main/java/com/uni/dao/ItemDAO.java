@@ -36,15 +36,7 @@ public class ItemDAO {
              ResultSet rs = st.executeQuery(sql)) {
 
             while (rs.next()) {
-                Item item = new Item(
-                        rs.getInt("id"),
-                        rs.getString("code"),
-                        rs.getString("name"),
-                        rs.getString("category"),
-                        rs.getDouble("unit_price"),
-                        rs.getInt("stock_qty")
-                );
-                itemList.add(item);
+                itemList.add(extractItemFromResultSet(rs));
             }
 
         } catch (SQLException e) {
@@ -62,14 +54,7 @@ public class ItemDAO {
             ps.setInt(1, id);
             ResultSet rs = ps.executeQuery();
             if (rs.next()) {
-                return new Item(
-                        rs.getInt("id"),
-                        rs.getString("code"),
-                        rs.getString("name"),
-                        rs.getString("category"),
-                        rs.getDouble("unit_price"),
-                        rs.getInt("stock_qty")
-                );
+                return extractItemFromResultSet(rs);
             }
 
         } catch (SQLException e) {
@@ -107,5 +92,36 @@ public class ItemDAO {
             e.printStackTrace();
         }
         return false;
+    }
+
+    public Item getItemByCode(String code) {
+        String sql = "SELECT * FROM items WHERE code = ?";
+        try (Connection conn = DBConnection.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+            stmt.setString(1, code);
+            ResultSet rs = stmt.executeQuery();
+            if (rs.next()) {
+                return extractItemFromResultSet(rs);
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    /**
+     * Utility method to map a ResultSet row to an Item object.
+     */
+    private Item extractItemFromResultSet(ResultSet rs) throws SQLException {
+        return new Item(
+                rs.getInt("id"),
+                rs.getString("code"),
+                rs.getString("name"),
+                rs.getString("category"),
+                rs.getDouble("unit_price"),
+                rs.getInt("stock_qty")
+        );
     }
 }
