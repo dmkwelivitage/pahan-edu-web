@@ -8,6 +8,16 @@
   <title>Edit Bill - Pahan Edu</title>
   <link rel="stylesheet" href="<%= request.getContextPath() %>/assets/css/style.css" />
   <script>
+    <%
+      // This script block is used to generate the item options dynamically
+      List<ItemDTO> items = (List<ItemDTO>) request.getAttribute("items");
+      %>
+    const itemOptionsHTML = `
+    <% for (ItemDTO i : items) { %>
+      <option value="<%= i.getId() %>"><%= i.getName() %></option>
+    <% } %>
+  `.trim();
+
     function calculateTotal() {
       const table = document.getElementById("itemsTable");
       const rows = table.querySelectorAll("tr:not(:first-child)");
@@ -34,19 +44,60 @@
       const table = document.getElementById("itemsTable");
       const row = table.insertRow();
 
-      row.innerHTML = `
-      <td>
-        <select name="itemIds[]" onchange="calculateTotal()">
-          ${document.getElementById("itemOptions").innerHTML}
-        </select>
-      </td>
-      <td><input type="number" name="quantities[]" min="1" value="1" oninput="calculateTotal()" required /></td>
-      <td><input type="number" name="unitPrices[]" step="0.01" value="0.00" oninput="calculateTotal()" required /></td>
-      <td><input type="number" name="lineTotals[]" step="0.01" value="0.00" readonly /></td>
-      <td><button type="button" onclick="removeRow(this)">Remove</button></td>
-    `;
+      // 1. Create item <select>
+      const select = document.createElement("select");
+      select.name = "itemIds[]";
+      select.onchange = calculateTotal;
 
-      calculateTotal(); // recalculate after adding
+      // Copy options from hidden template
+      const template = document.getElementById("itemOptions");
+      select.innerHTML = template.innerHTML;
+
+      // 2. Create quantity <input>
+      const quantity = document.createElement("input");
+      quantity.type = "number";
+      quantity.name = "quantities[]";
+      quantity.min = 1;
+      quantity.value = 1;
+      quantity.required = true;
+      quantity.oninput = calculateTotal;
+      quantity.onchange = calculateTotal;
+
+      // 3. Create unit price <input>
+      const unitPrice = document.createElement("input");
+      unitPrice.type = "number";
+      unitPrice.name = "unitPrices[]";
+      unitPrice.step = "0.01";
+      unitPrice.value = "0.00";
+      unitPrice.required = true;
+      unitPrice.oninput = calculateTotal;
+      unitPrice.onchange = calculateTotal;
+
+      // 4. Create line total <input> (readonly)
+      const lineTotal = document.createElement("input");
+      lineTotal.type = "number";
+      lineTotal.name = "lineTotals[]";
+      lineTotal.step = "0.01";
+      lineTotal.value = "0.00";
+      lineTotal.readOnly = true;
+
+      // 5. Create remove button
+      const removeBtn = document.createElement("button");
+      removeBtn.type = "button";
+      removeBtn.innerText = "Remove";
+      removeBtn.onclick = function () {
+        table.deleteRow(row.rowIndex);
+        calculateTotal();
+      };
+
+      // 6. Append all to row
+      row.insertCell().appendChild(select);
+      row.insertCell().appendChild(quantity);
+      row.insertCell().appendChild(unitPrice);
+      row.insertCell().appendChild(lineTotal);
+      row.insertCell().appendChild(removeBtn);
+
+      calculateTotal();
     }
 
     function removeRow(button) {
@@ -70,9 +121,9 @@
   }
 
   BillDTO bill = (BillDTO) request.getAttribute("bill");
-  List<ItemDTO> items = (List<ItemDTO>) request.getAttribute("billItems");
+  List<ItemDTO> billItems = (List<ItemDTO>) request.getAttribute("billItems");
 
-  if (bill == null || items == null) {
+  if (bill == null || billItems == null) {
 %>
 <div class="error">No bill data found.</div>
 <%

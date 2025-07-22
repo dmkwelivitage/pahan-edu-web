@@ -3,6 +3,7 @@ package com.uni.controller;
 import com.uni.dto.BillDTO;
 import com.uni.dto.BillItemDTO;
 import com.uni.dto.ItemDTO;
+import com.uni.model.Item;
 import com.uni.service.BillService;
 
 import com.uni.service.ItemService;
@@ -33,17 +34,20 @@ public class BillServlet extends HttpServlet {
                 response.sendRedirect(request.getContextPath() + "/bills");
                 return;
             }
+            List<ItemDTO> items = itemService.getAllItems();
+            request.setAttribute("items", items);
+
             int id = Integer.parseInt(idParam);
             BillDTO bill = billService.getBillById(id);
             request.setAttribute("bill", bill);
-            List<ItemDTO> items = new ArrayList<>();
+            List<ItemDTO> billItems = new ArrayList<>();
             for (BillItemDTO item : bill.getItems()) {
                 ItemDTO itemDTO = itemService.getItemById(item.getItemId());
                 if (itemDTO != null) {
-                    items.add(itemDTO);
+                    billItems.add(itemDTO);
                 }
             }
-            request.setAttribute("billItems", items);
+            request.setAttribute("billItems", billItems);
             request.getRequestDispatcher("/WEB-INF/views/bill_edit.jsp").forward(request, response);
         } else {
             if (request.getParameter("action") != null && request.getParameter("action").equals("create")) {
