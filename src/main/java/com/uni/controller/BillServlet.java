@@ -2,8 +2,10 @@ package com.uni.controller;
 
 import com.uni.dto.BillDTO;
 import com.uni.dto.BillItemDTO;
+import com.uni.dto.ItemDTO;
 import com.uni.service.BillService;
 
+import com.uni.service.ItemService;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.*;
@@ -15,6 +17,7 @@ import java.util.List;
 @WebServlet("/bills")
 public class BillServlet extends HttpServlet {
     private final BillService billService = new BillService();
+    private final ItemService itemService = new ItemService();
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
@@ -23,11 +26,31 @@ public class BillServlet extends HttpServlet {
         String idParam = request.getParameter("id");
 
         if (idParam != null) {
+            if (request.getParameter("action") != null && request.getParameter("action").equals("delete")) {
+                // Handle delete action
+                int id = Integer.parseInt(idParam);
+                boolean deleted = billService.deleteBill(id);
+                response.sendRedirect(request.getContextPath() + "/bills");
+                return;
+            }
             int id = Integer.parseInt(idParam);
             BillDTO bill = billService.getBillById(id);
             request.setAttribute("bill", bill);
+            List<ItemDTO> items = new ArrayList<>();
+            for (BillItemDTO item : bill.getItems()) {
+                ItemDTO itemDTO = itemService.getItemById(item.getItemId());
+                if (itemDTO != null) {
+                    items.add(itemDTO);
+                }
+            }
+            request.setAttribute("billItems", items);
             request.getRequestDispatcher("/WEB-INF/views/bill_edit.jsp").forward(request, response);
         } else {
+            if (request.getParameter("action") != null && request.getParameter("action").equals("create")) {
+                // Forward to create bill page
+                request.getRequestDispatcher("/WEB-INF/views/bill_create.jsp").forward(request, response);
+                return;
+            }
             List<BillDTO> bills = billService.getAllBills();
             request.setAttribute("bills", bills);
             request.getRequestDispatcher("/WEB-INF/views/bill_list.jsp").forward(request, response);
@@ -42,7 +65,7 @@ public class BillServlet extends HttpServlet {
 
         if ("update".equalsIgnoreCase(action)) {
             int id = Integer.parseInt(request.getParameter("id"));
-            BillDTO dto = extractBillDTO(request);
+            BillDTO dto = extractBillDTOUpdate(request);
             boolean updated = billService.updateBill(id, dto);
 
             if (updated) {
@@ -81,10 +104,44 @@ public class BillServlet extends HttpServlet {
 
         // Extract bill items
         List<BillItemDTO> billItems = new ArrayList<>();
-        String[] itemIds = request.getParameterValues("itemId");
-        String[] quantities = request.getParameterValues("quantity");
-        String[] unitPrices = request.getParameterValues("unitPrice");
-        String[] lineTotals = request.getParameterValues("lineTotal");
+        String[] itemIds = request.getParameterValues("itemIds[]");
+        String[] quantities = request.getParameterValues("quantities[]");
+        String[] unitPrices = request.getParameterValues("unitPrices[]");
+//        String[] lineTotals = request.getParameterValues("lineTotals[]");
+
+        if (itemIds != null) {
+            for (int i = 0; i < itemIds.length - 1; i++) {
+                BillItemDTO item = new BillItemDTO(
+                        0,
+                        id,
+                        Integer.parseInt(itemIds[i]),
+                        Integer.parseInt(quantities[i]),
+                        Double.parseDouble(unitPrices[i]),
+                        0
+//                        Double.parseDouble(lineTotals[i])
+                );
+                billItems.add(item);
+            }
+        }
+
+        return new BillDTO(id, customerId, billingDate, totalAmount, status, billItems);
+    }
+
+    private BillDTO extractBillDTOUpdate(HttpServletRequest request) {
+        int id = request.getParameter("id") != null ? Integer.parseInt(request.getParameter("id")) : 0;
+        int customerId = Integer.parseInt(request.getParameter("customerId"));
+        String status = request.getParameter("status");
+        double totalAmount = Double.parseDouble(request.getParameter("totalAmount"));
+
+        // Optional: parse custom billing date or use current
+        Date billingDate = new Date();
+
+        // Extract bill items
+        List<BillItemDTO> billItems = new ArrayList<>();
+        String[] itemIds = request.getParameterValues("itemIds[]");
+        String[] quantities = request.getParameterValues("quantities[]");
+        String[] unitPrices = request.getParameterValues("unitPrices[]");
+//        String[] lineTotals = request.getParameterValues("lineTotals[]");
 
         if (itemIds != null) {
             for (int i = 0; i < itemIds.length; i++) {
@@ -94,7 +151,8 @@ public class BillServlet extends HttpServlet {
                         Integer.parseInt(itemIds[i]),
                         Integer.parseInt(quantities[i]),
                         Double.parseDouble(unitPrices[i]),
-                        Double.parseDouble(lineTotals[i])
+                        0
+//                        Double.parseDouble(lineTotals[i])
                 );
                 billItems.add(item);
             }

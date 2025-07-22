@@ -77,7 +77,11 @@ public class BillService {
 
     // Delete bill
     public boolean deleteBill(int id) {
-        billItemDAO.findByBillId(id);
+        List<BillItem> items =  billItemDAO.findByBillId(id);
+        // First delete all items associated with the bill
+        for (BillItem item : items) {
+            billItemDAO.deleteById(item.getId());
+        }
         return billDAO.delete(id);
     }
 
