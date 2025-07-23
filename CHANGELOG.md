@@ -1,3 +1,32 @@
+## [0.5.0] - 2025-07-21
+### Added
+- Full login/logout functionality with session-based authentication.
+- `LoginServlet` and `LogoutServlet` controllers with GET/POST handling.
+- Secure `DashboardServlet` access via session validation.
+- Dark-themed login UI with branding and Font Awesome icons.
+- JUnit tests for `AuthService` with dynamic test user setup/teardown.
+- JSP views securely placed in `WEB-INF/views`.
+
+### Changed
+- Global UI styling updated for modern dark theme.
+- Font Awesome integration added for icons.
+- Dashboard navigation protected via session checks.
+
+### Security
+- Direct access to JSP views restricted by moving them under `WEB-INF/views`.
+- Secure session-based authentication flow.
+
+### Testing
+- JUnit tests implemented for `AuthService`.
+- `@BeforeEach` and `@AfterEach` handle test user creation and cleanup.
+
+### Notes
+- Merged into `dev` after code review.
+- Feature branch `feature/login` deleted after merge.
+- No version tag applied to `main` yet — pending full QA.
+
+---
+
 ## [0.4.0] - 2025-07-20
 ### Added
 - Full Item management module including model, DAO, service, DTO, and servlet.
@@ -6,7 +35,6 @@
 - JUnit tests for ItemDAO and ItemService.
 - Dashboard updated with navigation to Items section.
 - SQL schema and seed data for items added under `/db/sql`.
-
 
 ### Changed
 - Global CSS updated for consistent dark theme across all modules.
@@ -19,7 +47,7 @@
 
 ---
 
-## [0.3.0] - 2025-07-181
+## [0.3.0] - 2025-07-18
 ### Added
 - Full Customer CRUD implementation (Create, Read, Update, Delete)
 - `CustomerDTO`, `CustomerDAO`, `CustomerService`, and `CustomerServlet`
