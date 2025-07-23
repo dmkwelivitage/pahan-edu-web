@@ -34,6 +34,9 @@ public class BillDTO {
     public List<BillItemDTO> getItems() {
         return items;
     }
+    public void setItems(List<BillItemDTO> items) {
+        this.items = items;
+    }
 
     // Getters & Setters
     public int getId() { return id; }
