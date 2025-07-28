@@ -81,6 +81,10 @@
     <a href="<%= request.getContextPath() %>/bills">
       <button class="nav-button">Manage Bills</button>
     </a>
+    <a href="<%= request.getContextPath() %>/help">
+      <button class="nav-button">Help</button>
+    </a>
+
   </div>
 
   <form action="<%= request.getContextPath() %>/logout" method="post" style="margin-top: 40px;">
