@@ -1,3 +1,17 @@
+## [0.6.0] - 2025-07-28
+### ✨ Added
+
+- Help Section with user-friendly guidance on using key modules (Login, Customer, Items, Bills)
+- `help.jsp` static page for instructions and walkthrough
+- `HelpServlet` to route and render the help page via `/help`
+- Navigation bar link to the Help page from the dashboard
+
+### 🛠️ Changed
+
+- Updated `dashboard.jsp` and common header to include link to Help section
+
+---
+
 ## [0.5.0] - 2025-07-21
 ### Added
 - Full login/logout functionality with session-based authentication.
