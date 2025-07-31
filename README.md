@@ -38,6 +38,21 @@ pahan-edu-web/
 
 ## 🚀 How to Run
 
+### 🔐 Configuration
+
+Before running the app, create your `application.properties` file in:
+`src/main/resources/application.properties`
+
+Use this template:  
+`src/main/resources/application-template.properties`
+
+🗃️ Database schema is stored under `/sql`. To set up the database:
+
+```bash
+mysql -u root -p pahana_edu < sql/schema.sql
+mysql -u root -p pahana_edu < sql/seed_data.sql
+```
+
 1. Install Java 21 and Apache Tomcat 11.
 2. Run `mvn clean package` to build the WAR file.
 3. Copy the `target/pahan-edu-web.war` to your Tomcat `webapps` folder.
