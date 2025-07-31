@@ -1,4 +1,7 @@
 <web-app xmlns="http://jakarta.ee/xml/ns/jakartaee" version="5.0">
+    <welcome-file-list>
+        <welcome-file>login</welcome-file>
+    </welcome-file-list>
     <servlet>
         <servlet-name>HelloServlet</servlet-name>
         <servlet-class>com.uni.HelloServlet</servlet-class>
