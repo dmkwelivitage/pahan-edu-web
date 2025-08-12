@@ -57,10 +57,11 @@
                 <thead class="table-light">
                     <tr>
                         <th scope="col">ID</th>
+                        <th scope="col">Code</th>
                         <th scope="col">Name</th>
-                        <th scope="col">Description</th>
-                        <th scope="col">Price</th>
-                        <th scope="col">Stock</th>
+                        <th scope="col">Category</th>
+                        <th scope="col">Unit Price</th>
+                        <th scope="col">Stock Qty</th>
                         <th scope="col" class="text-center">Actions</th>
                     </tr>
                 </thead>
@@ -72,7 +73,8 @@
                     %>
                     <tr>
                         <td><span class="badge bg-secondary"><%= obj.getId() %></span></td>
-                        <td><strong><%= obj.getName() %></strong></td>
+                        <td><strong><%= obj.getCode() != null ? obj.getCode() : "-" %></strong></td>
+                        <td><%= obj.getName() %></td>
                         <td><%= obj.getCategory() != null ? obj.getCategory() : "-" %></td>
                         <td>
                             <span class="badge bg-success">$<%= String.format("%.2f", obj.getUnitPrice()) %></span>
@@ -98,7 +100,7 @@
                         } else {
                     %>
                     <tr>
-                        <td colspan="6" class="text-center text-muted py-4">
+                        <td colspan="7" class="text-center text-muted py-4">
                             <i class="bi bi-inbox display-4 d-block mb-3"></i>
                             <h5>No items found</h5>
                             <p class="mb-0">Start by adding your first item using the button above.</p>
@@ -130,25 +132,29 @@
                     
                     <div class="row g-3">
                         <div class="col-md-6">
+                            <label for="code" class="form-label">Item Code <span class="text-danger">*</span></label>
+                            <input type="text" class="form-control" id="code" name="code" required>
+                        </div>
+                        <div class="col-md-6">
                             <label for="name" class="form-label">Item Name <span class="text-danger">*</span></label>
                             <input type="text" class="form-control" id="name" name="name" required>
                         </div>
                         <div class="col-md-6">
-                            <label for="price" class="form-label">Price <span class="text-danger">*</span></label>
+                            <label for="category" class="form-label">Category</label>
+                            <input type="text" class="form-control" id="category" name="category" 
+                                   placeholder="Enter item category">
+                        </div>
+                        <div class="col-md-6">
+                            <label for="unitPrice" class="form-label">Unit Price <span class="text-danger">*</span></label>
                             <div class="input-group">
                                 <span class="input-group-text">$</span>
-                                <input type="number" class="form-control" id="price" name="price" 
+                                <input type="number" class="form-control" id="unitPrice" name="unitPrice" 
                                        step="0.01" min="0" required>
                             </div>
                         </div>
-                        <div class="col-12">
-                            <label for="description" class="form-label">Description</label>
-                            <textarea class="form-control" id="description" name="description" rows="3"
-                                      placeholder="Enter item description"></textarea>
-                        </div>
                         <div class="col-md-6">
-                            <label for="stock" class="form-label">Stock Quantity</label>
-                            <input type="number" class="form-control" id="stock" name="stock" 
+                            <label for="stockQty" class="form-label">Stock Quantity</label>
+                            <input type="number" class="form-control" id="stockQty" name="stockQty" 
                                    min="0" value="0">
                         </div>
                     </div>

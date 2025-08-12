@@ -140,8 +140,8 @@
                             </select>
                         </div>
                         <div class="col-md-6">
-                            <label for="billDate" class="form-label">Bill Date <span class="text-danger">*</span></label>
-                            <input type="date" class="form-control" id="billDate" name="billDate" required>
+                            <label for="billingDate" class="form-label">Bill Date <span class="text-danger">*</span></label>
+                            <input type="date" class="form-control" id="billingDate" name="billingDate" required>
                         </div>
                         
                         <div class="col-12">
@@ -159,7 +159,7 @@
                                                placeholder="Qty" min="1" value="1" required>
                                     </div>
                                     <div class="col-md-3">
-                                        <input type="number" class="form-control" name="prices[]" 
+                                        <input type="number" class="form-control" name="unitPrices[]" 
                                                placeholder="Price" step="0.01" min="0" required>
                                     </div>
                                     <div class="col-md-2">
@@ -265,7 +265,7 @@ document.addEventListener('DOMContentLoaded', function() {
     });
     
     billItems.addEventListener('input', function(e) {
-        if (e.target.name === 'quantities[]' || e.target.name === 'prices[]') {
+        if (e.target.name === 'quantities[]' || e.target.name === 'unitPrices[]') {
             updateTotal();
         }
     });
@@ -276,7 +276,7 @@ document.addEventListener('DOMContentLoaded', function() {
         for (var i = 0; i < items.length; i++) {
             var item = items[i];
             var qty = parseFloat(item.querySelector('[name="quantities[]"]').value) || 0;
-            var price = parseFloat(item.querySelector('[name="prices[]"]').value) || 0;
+            var price = parseFloat(item.querySelector('[name="unitPrices[]"]').value) || 0;
             var itemTotal = qty * price;
             item.querySelector('.item-total').textContent = '$' + itemTotal.toFixed(2);
             total += itemTotal;

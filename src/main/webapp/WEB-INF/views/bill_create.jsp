@@ -63,8 +63,8 @@
                             </select>
                         </div>
                         <div class="col-md-6">
-                            <label for="billDate" class="form-label">Bill Date <span class="text-danger">*</span></label>
-                            <input type="date" class="form-control" id="billDate" name="billDate" 
+                            <label for="billingDate" class="form-label">Bill Date <span class="text-danger">*</span></label>
+                            <input type="date" class="form-control" id="billingDate" name="billingDate" 
                                    value="<%= java.time.LocalDate.now() %>" required>
                         </div>
                         
@@ -82,8 +82,8 @@
                                                 if (items != null) {
                                                     for (ItemDTO item : items) {
                                             %>
-                                            <option value="<%= item.getId() %>" data-price="<%= item.getPrice() %>">
-                                                <%= item.getName() %> - $<%= String.format("%.2f", item.getPrice()) %>
+                                            <option value="<%= item.getId() %>" data-price="<%= item.getUnitPrice() %>">
+                                                <%= item.getName() %> - $<%= String.format("%.2f", item.getUnitPrice()) %>
                                             </option>
                                             <%
                                                     }
@@ -100,7 +100,7 @@
                                         <label class="form-label">Unit Price</label>
                                         <div class="input-group">
                                             <span class="input-group-text">$</span>
-                                            <input type="number" class="form-control" name="prices[]" 
+                                            <input type="number" class="form-control" name="unitPrices[]" 
                                                    placeholder="Price" step="0.01" min="0" required>
                                         </div>
                                     </div>
@@ -223,7 +223,7 @@ document.addEventListener('DOMContentLoaded', function() {
     var addItemBtn = document.getElementById('addItemBtn');
     var billItems = document.getElementById('billItems');
     var customerSelect = document.getElementById('customerId');
-    var dateInput = document.getElementById('billDate');
+    var dateInput = document.getElementById('billingDate');
     
     // Add new item row
     if (addItemBtn) {
@@ -253,7 +253,7 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // Update totals when inputs change
     billItems.addEventListener('input', function(e) {
-        if (e.target.name === 'quantities[]' || e.target.name === 'prices[]') {
+        if (e.target.name === 'quantities[]' || e.target.name === 'unitPrices[]') {
             updateTotals();
         }
     });
@@ -262,7 +262,7 @@ document.addEventListener('DOMContentLoaded', function() {
     billItems.addEventListener('change', function(e) {
         if (e.target.name === 'itemIds[]') {
             var itemRow = e.target.closest('.bill-item');
-            var priceInput = itemRow.querySelector('[name="prices[]"]');
+            var priceInput = itemRow.querySelector('[name="unitPrices[]"]');
             var selectedOption = e.target.options[e.target.selectedIndex];
             if (selectedOption.dataset.price) {
                 priceInput.value = selectedOption.dataset.price;
@@ -272,16 +272,20 @@ document.addEventListener('DOMContentLoaded', function() {
     });
     
     // Update customer selection display
-    customerSelect.addEventListener('change', function() {
-        var selectedOption = this.options[this.selectedIndex];
-        document.getElementById('selectedCustomer').textContent = 
-            selectedOption.value ? selectedOption.text : 'None selected';
-    });
+    if (customerSelect) {
+        customerSelect.addEventListener('change', function() {
+            var selectedOption = this.options[this.selectedIndex];
+            document.getElementById('selectedCustomer').textContent = 
+                selectedOption.value ? selectedOption.text : 'None selected';
+        });
+    }
     
     // Update date display
-    dateInput.addEventListener('change', function() {
-        document.getElementById('selectedDate').textContent = this.value;
-    });
+    if (dateInput) {
+        dateInput.addEventListener('change', function() {
+            document.getElementById('selectedDate').textContent = this.value;
+        });
+    }
     
     function updateTotals() {
         var total = 0;
@@ -291,7 +295,7 @@ document.addEventListener('DOMContentLoaded', function() {
         for (var i = 0; i < items.length; i++) {
             var item = items[i];
             var qty = parseFloat(item.querySelector('[name="quantities[]"]').value) || 0;
-            var price = parseFloat(item.querySelector('[name="prices[]"]').value) || 0;
+            var price = parseFloat(item.querySelector('[name="unitPrices[]"]').value) || 0;
             var itemTotal = qty * price;
             
             if (qty > 0 && price > 0) {

@@ -71,9 +71,9 @@
                             </select>
                         </div>
                         <div class="col-md-6">
-                            <label for="billDate" class="form-label">Bill Date <span class="text-danger">*</span></label>
-                            <input type="date" class="form-control" id="billDate" name="billDate" 
-                                   value="<%= bill.getBillDate() != null ? bill.getBillDate() : java.time.LocalDate.now() %>" required>
+                            <label for="billingDate" class="form-label">Bill Date <span class="text-danger">*</span></label>
+                            <input type="date" class="form-control" id="billingDate" name="billingDate" 
+                                   value="<%= bill.getBillingDate() != null ? bill.getBillingDate() : java.time.LocalDate.now() %>" required>
                         </div>
                         
                         <div class="col-12">
@@ -153,7 +153,7 @@
                 <div class="mb-3">
                     <small class="text-muted">Bill Date</small>
                     <div id="selectedDate">
-                        <%= bill.getBillDate() != null ? bill.getBillDate() : "Not set" %>
+                        <%= bill.getBillingDate() != null ? bill.getBillingDate() : "Not set" %>
                     </div>
                 </div>
                 <div class="mb-3">
@@ -213,7 +213,7 @@ document.addEventListener('DOMContentLoaded', function() {
     var addItemBtn = document.getElementById('addItemBtn');
     var billItems = document.getElementById('billItems');
     var customerSelect = document.getElementById('customerId');
-    var dateInput = document.getElementById('billDate');
+    var dateInput = document.getElementById('billingDate');
     
     // Add new item row
     if (addItemBtn) {
@@ -253,8 +253,8 @@ document.addEventListener('DOMContentLoaded', function() {
                         if (items != null) {
                             for (ItemDTO item : items) {
                     %>
-                    <option value="<%= item.getId() %>" data-price="<%= item.getPrice() %>">
-                        <%= item.getName() %> - $<%= String.format("%.2f", item.getPrice()) %>
+                    <option value="<%= item.getId() %>" data-price="<%= item.getUnitPrice() %>">
+                        <%= item.getName() %> - $<%= String.format("%.2f", item.getUnitPrice()) %>
                     </option>
                     <%
                             }
@@ -271,7 +271,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 <label class="form-label">Unit Price</label>
                 <div class="input-group">
                     <span class="input-group-text">$</span>
-                    <input type="number" class="form-control" name="prices[]" 
+                    <input type="number" class="form-control" name="unitPrices[]" 
                            placeholder="Price" step="0.01" min="0" required>
                 </div>
             </div>
@@ -299,7 +299,7 @@ document.addEventListener('DOMContentLoaded', function() {
         var itemSelect = itemRow.querySelector('[name="itemIds[]"]');
         itemSelect.addEventListener('change', function() {
             var selectedOption = this.options[this.selectedIndex];
-            var priceInput = itemRow.querySelector('[name="prices[]"]');
+            var priceInput = itemRow.querySelector('[name="unitPrices[]"]');
             if (selectedOption.dataset.price) {
                 priceInput.value = selectedOption.dataset.price;
                 updateTotals();
@@ -307,7 +307,7 @@ document.addEventListener('DOMContentLoaded', function() {
         });
         
         var qtyInput = itemRow.querySelector('[name="quantities[]"]');
-        var priceInput = itemRow.querySelector('[name="prices[]"]');
+        var priceInput = itemRow.querySelector('[name="unitPrices[]"]');
         qtyInput.addEventListener('input', updateTotals);
         priceInput.addEventListener('input', updateTotals);
         
@@ -332,7 +332,7 @@ document.addEventListener('DOMContentLoaded', function() {
         for (var i = 0; i < items.length; i++) {
             var item = items[i];
             var qty = parseFloat(item.querySelector('[name="quantities[]"]').value) || 0;
-            var price = parseFloat(item.querySelector('[name="prices[]"]').value) || 0;
+            var price = parseFloat(item.querySelector('[name="unitPrices[]"]').value) || 0;
             var itemTotal = qty * price;
             
             if (qty > 0 && price > 0) {

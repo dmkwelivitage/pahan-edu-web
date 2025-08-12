@@ -35,27 +35,33 @@
                     
                     <div class="row g-3">
                         <div class="col-md-6">
+                            <label for="code" class="form-label">Item Code <span class="text-danger">*</span></label>
+                            <input type="text" class="form-control" id="code" name="code" 
+                                   value="<%= item.getCode() != null ? item.getCode() : "" %>" required>
+                        </div>
+                        <div class="col-md-6">
                             <label for="name" class="form-label">Item Name <span class="text-danger">*</span></label>
                             <input type="text" class="form-control" id="name" name="name" 
                                    value="<%= item.getName() %>" required>
                         </div>
                         <div class="col-md-6">
-                            <label for="price" class="form-label">Price <span class="text-danger">*</span></label>
-                            <div class="input-group">
-                                <span class="input-group-text">$</span>
-                                <input type="number" class="form-control" id="price" name="price" 
-                                       step="0.01" min="0" value="<%= item.getPrice() %>" required>
-                            </div>
-                        </div>
-                        <div class="col-12">
-                            <label for="description" class="form-label">Description</label>
-                            <textarea class="form-control" id="description" name="description" rows="3"
-                                      placeholder="Enter item description"><%= item.getDescription() != null ? item.getDescription() : "" %></textarea>
+                            <label for="category" class="form-label">Category</label>
+                            <input type="text" class="form-control" id="category" name="category" 
+                                   value="<%= item.getCategory() != null ? item.getCategory() : "" %>"
+                                   placeholder="Enter item category">
                         </div>
                         <div class="col-md-6">
-                            <label for="stock" class="form-label">Stock Quantity</label>
-                            <input type="number" class="form-control" id="stock" name="stock" 
-                                   min="0" value="<%= item.getStock() %>">
+                            <label for="unitPrice" class="form-label">Unit Price <span class="text-danger">*</span></label>
+                            <div class="input-group">
+                                <span class="input-group-text">$</span>
+                                <input type="number" class="form-control" id="unitPrice" name="unitPrice" 
+                                       step="0.01" min="0" value="<%= item.getUnitPrice() %>" required>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="stockQty" class="form-label">Stock Quantity</label>
+                            <input type="number" class="form-control" id="stockQty" name="stockQty" 
+                                   min="0" value="<%= item.getStockQty() %>">
                         </div>
                     </div>
                     

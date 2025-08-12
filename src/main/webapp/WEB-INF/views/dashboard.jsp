@@ -16,6 +16,9 @@
                 <i class="bi bi-person-circle me-2"></i>
                 <%= user.getRole() %>
             </span>
+          <a href="<%= request.getContextPath() %>/logout" class="btn btn-outline-secondary">
+              <i class="bi bi-box-arrow-right me-2"></i>Logout
+            </a>
         </div>
     </div>
 </div>
@@ -162,6 +165,7 @@
     
     .card {
         border-radius: 0.75rem;
+        background-color: #ffffff;
     }
     
     .bg-gradient {

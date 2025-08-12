@@ -18,6 +18,11 @@
     <link rel="stylesheet" href="<%= request.getContextPath() %>/assets/css/style.css">
     
     <style>
+        body {
+            background-color: #f8f9fa;
+            color: #212529;
+        }
+        
         .navbar-brand img {
             height: 40px;
             width: auto;
@@ -51,6 +56,21 @@
             font-weight: bold;
         }
         
+        .navbar {
+            background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%) !important;
+            border-bottom: 1px solid #dee2e6 !important;
+        }
+        
+        .dropdown-menu {
+            background: #ffffff;
+            border: 1px solid #dee2e6;
+            box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+        }
+        
+        .dropdown-item:hover {
+            background-color: #f8f9fa;
+        }
+        
         @media (max-width: 768px) {
             .navbar-brand img {
                 height: 30px;
@@ -64,7 +84,7 @@
     </style>
 </head>
 <body>
-    <nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm border-bottom">
+    <nav class="navbar navbar-expand-lg navbar-light shadow-sm">
         <div class="container-fluid">
             <a class="navbar-brand d-flex align-items-center" href="<%= request.getContextPath() %>/dashboard">
                 <img src="<%= request.getContextPath() %>/assets/img/logo2.png" alt="Pahan Edu" class="me-2">

@@ -3,7 +3,7 @@
     </div>
     
     <!-- Footer -->
-    <footer class="footer mt-auto py-3 bg-light border-top">
+    <footer class="footer mt-auto py-3 bg-white border-top">
         <div class="container-fluid">
             <div class="row align-items-center">
                 <div class="col-md-6">
@@ -24,7 +24,8 @@
     <style>
         .footer {
             margin-top: auto;
-            background: linear-gradient(180deg, #f8f9fa 0%, #e9ecef 100%);
+            background: linear-gradient(180deg, #ffffff 0%, #f8f9fa 100%);
+            border-top: 1px solid #dee2e6;
         }
         
         @media (max-width: 767.98px) {
