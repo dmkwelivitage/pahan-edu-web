@@ -17,7 +17,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-@WebServlet("/bills")
+@WebServlet({"/bills", "/bill"})
 public class BillServlet extends HttpServlet {
     private final BillService billService = new BillService();
     private final ItemService itemService = new ItemService();
@@ -28,45 +28,73 @@ public class BillServlet extends HttpServlet {
             throws ServletException, IOException {
 
         String idParam = request.getParameter("id");
+        String requestURI = request.getRequestURI();
+        String contextPath = request.getContextPath();
 
-        if (idParam != null) {
-            if (request.getParameter("action") != null && request.getParameter("action").equals("delete")) {
-                // Handle delete action
-                int id = Integer.parseInt(idParam);
-                boolean deleted = billService.deleteBill(id);
-                response.sendRedirect(request.getContextPath() + "/bills");
-                return;
-            }
-            List<ItemDTO> items = itemService.getAllItems();
-            request.setAttribute("items", items);
-
+        // Handle bill summary endpoint (/bill)
+        if (requestURI.endsWith("/bill") && idParam != null) {
             int id = Integer.parseInt(idParam);
             BillDTO bill = billService.getBillById(id);
-            request.setAttribute("bill", bill);
-            List<ItemDTO> billItems = new ArrayList<>();
-            for (BillItemDTO item : bill.getItems()) {
-                ItemDTO itemDTO = itemService.getItemById(item.getItemId());
-                if (itemDTO != null) {
-                    billItems.add(itemDTO);
-                }
-            }
-            List<CustomerDTO> customers = customerService.getAllCustomers();
-            request.setAttribute("customers", customers);
-            request.setAttribute("billItems", billItems);
-            request.getRequestDispatcher("/WEB-INF/views/bill_edit.jsp").forward(request, response);
-        } else {
-            if (request.getParameter("action") != null && request.getParameter("action").equals("create")) {
-                // Forward to create bill page
-                request.getRequestDispatcher("/WEB-INF/views/bill_create.jsp").forward(request, response);
+            if (bill != null) {
+                CustomerDTO customer = customerService.getCustomerById(bill.getCustomerId());
+                List<BillItemDTO> billItems = bill.getItems();
+                
+                // Get item details for each bill item
+                List<ItemDTO> items = itemService.getAllItems();
+                
+                request.setAttribute("bill", bill);
+                request.setAttribute("customer", customer);
+                request.setAttribute("billItems", billItems);
+                request.setAttribute("items", items);
+                request.getRequestDispatcher("/WEB-INF/views/bill_summary.jsp").forward(request, response);
+                return;
+            } else {
+                response.sendError(HttpServletResponse.SC_NOT_FOUND, "Bill not found");
                 return;
             }
-            List<BillDTO> bills = billService.getAllBills();
-            List<CustomerDTO> customers = customerService.getAllCustomers();
-            List<ItemDTO> items = itemService.getAllItems();
-            request.setAttribute("bills", bills);
-            request.setAttribute("customers", customers);
-            request.setAttribute("items", items);
-            request.getRequestDispatcher("/WEB-INF/views/bill_list.jsp").forward(request, response);
+        }
+
+        // Handle bills endpoint (/bills)
+        if (requestURI.endsWith("/bills")) {
+            if (idParam != null) {
+                if (request.getParameter("action") != null && request.getParameter("action").equals("delete")) {
+                    // Handle delete action
+                    int id = Integer.parseInt(idParam);
+                    boolean deleted = billService.deleteBill(id);
+                    response.sendRedirect(contextPath + "/bills");
+                    return;
+                }
+                List<ItemDTO> items = itemService.getAllItems();
+                request.setAttribute("items", items);
+
+                int id = Integer.parseInt(idParam);
+                BillDTO bill = billService.getBillById(id);
+                request.setAttribute("bill", bill);
+                List<ItemDTO> billItems = new ArrayList<>();
+                for (BillItemDTO item : bill.getItems()) {
+                    ItemDTO itemDTO = itemService.getItemById(item.getItemId());
+                    if (itemDTO != null) {
+                        billItems.add(itemDTO);
+                    }
+                }
+                List<CustomerDTO> customers = customerService.getAllCustomers();
+                request.setAttribute("customers", customers);
+                request.setAttribute("billItems", billItems);
+                request.getRequestDispatcher("/WEB-INF/views/bill_edit.jsp").forward(request, response);
+            } else {
+                if (request.getParameter("action") != null && request.getParameter("action").equals("create")) {
+                    // Forward to create bill page
+                    request.getRequestDispatcher("/WEB-INF/views/bill_create.jsp").forward(request, response);
+                    return;
+                }
+                List<BillDTO> bills = billService.getAllBills();
+                List<CustomerDTO> customers = customerService.getAllCustomers();
+                List<ItemDTO> items = itemService.getAllItems();
+                request.setAttribute("bills", bills);
+                request.setAttribute("customers", customers);
+                request.setAttribute("items", items);
+                request.getRequestDispatcher("/WEB-INF/views/bill_list.jsp").forward(request, response);
+            }
         }
     }
 

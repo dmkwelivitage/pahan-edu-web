@@ -4,6 +4,7 @@
 <%@ page import="com.uni.dto.BillItemDTO" %>
 <%@ page import="java.util.List" %>
 <%@ page import="java.time.format.DateTimeFormatter" %>
+<%@ page import="com.uni.dto.ItemDTO" %>
 
 <jsp:include page="header.jsp">
     <jsp:param name="pageTitle" value="Bill Summary" />
@@ -50,9 +51,11 @@
                         <h4 class="text-uppercase text-muted mb-1">Bill</h4>
                         <h2 class="text-primary mb-0">#<%= bill.getId() %></h2>
                         <p class="text-muted mb-0">
-                            Date: <%= bill.getBillingDate() != null ? 
-                                bill.getBillingDate().format(DateTimeFormatter.ofPattern("MMMM dd, yyyy")) : "N/A" %>
+                            Date: <%= bill.getBillingDate() != null
+                                ? new java.text.SimpleDateFormat("MMMM dd, yyyy").format(bill.getBillingDate())
+                                : "N/A" %>
                         </p>
+
                     </div>
                 </div>
                 
@@ -65,8 +68,8 @@
                         <div class="p-3 bg-light rounded">
                             <h6 class="fw-bold mb-1"><%= customer.getName() %></h6>
                             <p class="mb-1 text-muted">Account: <%= customer.getAccountNumber() %></p>
-                            <% if (customer.getEmail() != null) { %>
-                                <p class="mb-1 text-muted">Email: <%= customer.getEmail() %></p>
+                            <% if (customer.getUnitsConsumed() != 0) { %>
+                                <p class="mb-1 text-muted">Email: <%= customer.getUnitsConsumed() %></p>
                             <% } %>
                             <% if (customer.getPhone() != null) { %>
                                 <p class="mb-1 text-muted">Phone: <%= customer.getPhone() %></p>
@@ -86,9 +89,10 @@
                             <div class="d-flex justify-content-between mb-2">
                                 <span class="text-muted">Date:</span>
                                 <span class="fw-bold">
-                                    <%= bill.getBillingDate() != null ? 
-                                        bill.getBillingDate().format(DateTimeFormatter.ofPattern("MMM dd, yyyy")) : "N/A" %>
-                                </span>
+                                <%= bill.getBillingDate() != null
+                                        ? new java.text.SimpleDateFormat("MMMM dd, yyyy").format(bill.getBillingDate())
+                                        : "N/A" %>
+                            </span>
                             </div>
                             <div class="d-flex justify-content-between mb-2">
                                 <span class="text-muted">Status:</span>
@@ -97,9 +101,17 @@
                             <div class="d-flex justify-content-between">
                                 <span class="text-muted">Due Date:</span>
                                 <span class="fw-bold">
-                                    <%= bill.getBillingDate() != null ? 
-                                        bill.getBillingDate().plusDays(30).format(DateTimeFormatter.ofPattern("MMM dd, yyyy")) : "N/A" %>
-                                </span>
+                                <%
+                                    String dueDate = "N/A";
+                                    if (bill.getBillingDate() != null) {
+                                        java.util.Calendar cal = java.util.Calendar.getInstance();
+                                        cal.setTime(bill.getBillingDate());
+                                        cal.add(java.util.Calendar.DAY_OF_MONTH, 30);
+                                        dueDate = new java.text.SimpleDateFormat("MMM dd, yyyy").format(cal.getTime());
+                                    }
+                                %>
+                                <%= dueDate %>
+                            </span>
                             </div>
                         </div>
                     </div>
@@ -121,19 +133,33 @@
                             </thead>
                             <tbody>
                                 <%
+                                    List<ItemDTO> items = (List<ItemDTO>) request.getAttribute("items");
                                     if (billItems != null && !billItems.isEmpty()) {
                                         double subtotal = 0;
                                         for (int i = 0; i < billItems.size(); i++) {
                                             BillItemDTO item = billItems.get(i);
                                             double lineTotal = item.getQuantity() * item.getUnitPrice();
                                             subtotal += lineTotal;
+                                            
+                                            // Find item details
+                                            String itemName = "Item #" + item.getItemId();
+                                            String itemDescription = null;
+                                            if (items != null) {
+                                                for (ItemDTO itemDTO : items) {
+                                                    if (itemDTO.getId() == item.getItemId()) {
+                                                        itemName = itemDTO.getName();
+                                                        itemDescription = itemDTO.getCategory();
+                                                        break;
+                                                    }
+                                                }
+                                            }
                                 %>
                                 <tr>
                                     <td class="text-center"><%= i + 1 %></td>
                                     <td>
-                                        <strong><%= item.getItemName() != null ? item.getItemName() : "Item #" + item.getItemId() %></strong>
-                                        <% if (item.getItemDescription() != null) { %>
-                                            <br><small class="text-muted"><%= item.getItemDescription() %></small>
+                                        <strong><%= itemName %></strong>
+                                        <% if (itemDescription != null) { %>
+                                            <br><small class="text-muted"><%= itemDescription %></small>
                                         <% } %>
                                     </td>
                                     <td class="text-center"><%= item.getQuantity() %></td>
@@ -161,18 +187,29 @@
                 <div class="row">
                     <div class="col-md-6 offset-md-6">
                         <div class="p-3 bg-light rounded">
+                            <%
+                                // Calculate subtotal from items
+                                double subtotal = 0;
+                                if (billItems != null && !billItems.isEmpty()) {
+                                    for (BillItemDTO item : billItems) {
+                                        subtotal += item.getQuantity() * item.getUnitPrice();
+                                    }
+                                }
+                                double tax = subtotal * 0.1;
+                                double total = subtotal + tax;
+                            %>
                             <div class="d-flex justify-content-between mb-2">
                                 <span class="text-muted">Subtotal:</span>
-                                <span class="fw-bold">$<%= String.format("%.2f", bill.getTotalAmount() / 1.1) %></span>
+                                <span class="fw-bold">$<%= String.format("%.2f", subtotal) %></span>
                             </div>
                             <div class="d-flex justify-content-between mb-2">
                                 <span class="text-muted">Tax (10%):</span>
-                                <span class="fw-bold">$<%= String.format("%.2f", bill.getTotalAmount() * 0.1) %></span>
+                                <span class="fw-bold">$<%= String.format("%.2f", tax) %></span>
                             </div>
                             <hr>
                             <div class="d-flex justify-content-between">
                                 <span class="text-uppercase fw-bold fs-5">Total Amount:</span>
-                                <span class="text-primary fw-bold fs-4">$<%= String.format("%.2f", bill.getTotalAmount()) %></span>
+                                <span class="text-primary fw-bold fs-4">$<%= String.format("%.2f", total) %></span>
                             </div>
                         </div>
                     </div>

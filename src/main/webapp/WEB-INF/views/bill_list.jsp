@@ -3,6 +3,7 @@
 <%@ page import="java.util.List" %>
 <%@ page import="com.uni.dto.CustomerDTO" %>
 <%@ page import="com.uni.dto.ItemDTO" %>
+<%@ page import="com.uni.dto.BillItemDTO" %>
 
 <jsp:include page="header.jsp">
     <jsp:param name="pageTitle" value="Bills" />
@@ -61,6 +62,7 @@
                         <th scope="col">Bill ID</th>
                         <th scope="col">Customer</th>
                         <th scope="col">Date</th>
+                        <th scope="col">Items</th>
                         <th scope="col">Total Amount</th>
                         <th scope="col">Status</th>
                         <th scope="col" class="text-center">Actions</th>
@@ -70,6 +72,7 @@
                     <%
                         List<BillDTO> bills = (List<BillDTO>) request.getAttribute("bills");
                         List<CustomerDTO> customers = (List<CustomerDTO>) request.getAttribute("customers");
+                        List<ItemDTO> allItems = (List<ItemDTO>) request.getAttribute("items");
                         String customerName = "Unknown";
                         if (bills != null && !bills.isEmpty()) {
                             for (BillDTO obj : bills) {
@@ -85,6 +88,37 @@
                         <td><strong class="text-dark"><%=  customerName %></strong></td>
                         <td class="text-dark"><%= obj.getBillingDate() != null ? obj.getBillingDate() : "N/A" %></td>
                         <td>
+                            <%
+                                List<BillItemDTO> billItems = obj.getItems();
+                                if (billItems != null && !billItems.isEmpty()) {
+                                    for (int i = 0; i < billItems.size(); i++) {
+                                        BillItemDTO billItem = billItems.get(i);
+                                        String itemName = "Unknown Item";
+                                        // Find item name from allItems
+                                        if (allItems != null) {
+                                            for (ItemDTO item : allItems) {
+                                                if (item.getId() == billItem.getItemId()) {
+                                                    itemName = item.getName();
+                                                    break;
+                                                }
+                                            }
+                                        }
+                                        if (i > 0) out.print("<br>");
+                            %>
+                                <small class="text-muted">
+                                    <i class="bi bi-box-seam me-1"></i>
+                                    <%= itemName %> × <%= billItem.getQuantity() %>
+                                </small>
+                            <%
+                                    }
+                                } else {
+                            %>
+                                <span class="text-muted small">No items</span>
+                            <%
+                                }
+                            %>
+                        </td>
+                        <td>
                             <span class="badge bg-success">$<%= String.format("%.2f", obj.getTotalAmount()) %></span>
                         </td>
                         <td>
@@ -92,7 +126,7 @@
                         </td>
                         <td class="text-center">
                             <div class="btn-group" role="group">
-                                <a href="<%= request.getContextPath() %>/bill-summary?id=<%= obj.getId() %>" 
+                                <a href="<%= request.getContextPath() %>/bill?id=<%= obj.getId() %>" 
                                    class="btn btn-outline-info btn-sm" title="View Summary">
                                     <i class="bi bi-eye"></i>
                                 </a>
@@ -112,7 +146,7 @@
                         } else {
                     %>
                     <tr>
-                        <td colspan="6" class="text-center text-muted py-4">
+                        <td colspan="7" class="text-center text-muted py-4">
                             <i class="bi bi-inbox display-4 d-block mb-3"></i>
                             <h5 class="text-dark">No bills found</h5>
                             <p class="text-muted mb-0">Start by creating your first bill using the button above.</p>
@@ -350,6 +384,16 @@ document.addEventListener('DOMContentLoaded', function() {
     padding: 1rem;
     border-radius: 0.5rem;
     border: 1px solid #e9ecef;
+}
+
+/* Style for bill items in the table */
+.table td small {
+    font-size: 0.875rem;
+    line-height: 1.4;
+}
+
+.table td .bi-box-seam {
+    color: #6c757d;
 }
 </style>
 
