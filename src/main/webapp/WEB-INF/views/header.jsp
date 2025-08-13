@@ -1,7 +1,7 @@
 <%@ page contentType="text/html;charset=UTF-8" %>
 <%@ page import="com.uni.dto.UserDTO" %>
 <%
-  UserDTO user = (UserDTO) session.getAttribute("user");
+  UserDTO loggedUser = (UserDTO) session.getAttribute("loggedUser");
 %>
 <!DOCTYPE html>
 <html lang="en">
@@ -97,30 +97,17 @@
             
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav ms-auto">
-                    <% if (user != null) { %>
-                        <li class="nav-item dropdown">
-                            <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" role="button" data-bs-toggle="dropdown">
+                    <% if (loggedUser != null) { %>
+                        <li class="nav-item">
+                            <div class="d-flex align-items-center">
                                 <div class="user-avatar me-2">
-                                    <%= user.getUsername().substring(0, 1).toUpperCase() %>
+                                    <%= loggedUser.getUsername().substring(0, 1).toUpperCase() %>
                                 </div>
                                 <div class="user-info">
-                                    <span class="fw-semibold"><%= user.getUsername() %></span>
-                                    <small class="text-muted d-block"><%= user.getRole() %></small>
+                                    <span class="fw-semibold"><%= loggedUser.getUsername() %></span>
+                                    <small class="text-muted d-block"><%= loggedUser.getRole() %></small>
                                 </div>
-                            </a>
-                            <ul class="dropdown-menu dropdown-menu-end">
-                                <li><a class="dropdown-item" href="<%= request.getContextPath() %>/dashboard">
-                                    <i class="bi bi-house-door me-2"></i>Dashboard
-                                </a></li>
-                                <li><hr class="dropdown-divider"></li>
-                                <li>
-                                    <form action="<%= request.getContextPath() %>/logout" method="post" class="d-inline">
-                                        <button type="submit" class="dropdown-item text-danger">
-                                            <i class="bi bi-box-arrow-right me-2"></i>Logout
-                                        </button>
-                                    </form>
-                                </li>
-                            </ul>
+                            </div>
                         </li>
                     <% } %>
                 </ul>
