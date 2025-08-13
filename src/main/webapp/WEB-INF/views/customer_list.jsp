@@ -9,6 +9,9 @@
 <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
     <h1 class="h2">Customer Management</h1>
     <div class="btn-toolbar mb-2 mb-md-0">
+        <a href="<%= request.getContextPath() %>/customer-lookup" class="btn btn-outline-info me-2">
+            <i class="bi bi-search me-2"></i>Customer Lookup
+        </a>
         <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addCustomerModal">
             <i class="bi bi-plus-circle me-2"></i>Add Customer
         </button>

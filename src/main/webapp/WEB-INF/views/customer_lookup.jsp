@@ -95,12 +95,6 @@
                     </div>
                     <div class="col-md-6">
                         <div class="mb-3">
-                            <label class="form-label text-muted">Email</label>
-                            <div class="form-control-plaintext text-dark">
-                                <%= customer.getEmail() != null ? customer.getEmail() : "Not provided" %>
-                            </div>
-                        </div>
-                        <div class="mb-3">
                             <label class="form-label text-muted">Phone</label>
                             <div class="form-control-plaintext text-dark">
                                 <%= customer.getPhone() != null ? customer.getPhone() : "Not provided" %>
@@ -110,6 +104,12 @@
                             <label class="form-label text-muted">Address</label>
                             <div class="form-control-plaintext text-dark">
                                 <%= customer.getAddress() != null ? customer.getAddress() : "Not provided" %>
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label text-muted">Units Consumed</label>
+                            <div class="form-control-plaintext text-dark fw-bold">
+                                <%= customer.getUnitsConsumed() %>
                             </div>
                         </div>
                     </div>

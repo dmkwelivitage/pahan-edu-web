@@ -49,6 +49,15 @@ public class CustomerService {
         return null;
     }
 
+    // Get customer by account number
+    public CustomerDTO getCustomerByAccountNumber(String accountNumber) {
+        Customer customer = customerDAO.getCustomerByAccountNumber(accountNumber);
+        if (customer != null) {
+            return mapEntityToDto(customer);
+        }
+        return null;
+    }
+
     // Map DTO → Entity
     private Customer mapDtoToEntity(CustomerDTO dto) {
         return new Customer(
