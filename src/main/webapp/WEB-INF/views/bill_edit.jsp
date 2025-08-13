@@ -50,6 +50,7 @@
                 <form action="<%= request.getContextPath() %>/bills" method="post">
                     <input type="hidden" name="action" value="update"/>
                     <input type="hidden" name="id" value="<%= bill.getId() %>"/>
+                    <input type="hidden" name="totalAmount" id="totalAmountInput" value="0"/>
 
                     <div class="row g-3">
                         <div class="col-md-6">
@@ -82,8 +83,8 @@
                             <h6 class="mb-3">Bill Items</h6>
                             <div id="billItems">
                                 <%
-                                    List<BillItemDTO> billItemList = bill.getItems(); // From BillDTO
-                                    List<ItemDTO> allItems = (List<ItemDTO>) request.getAttribute("items"); // All available items
+                                    List<BillItemDTO> billItemList = bill.getItems();
+                                    List<ItemDTO> allItems = (List<ItemDTO>) request.getAttribute("items");
                                     if (billItemList != null && !billItemList.isEmpty()) {
                                         for (BillItemDTO billItem : billItemList) {
                                             ItemDTO matchedItem = null;
@@ -95,11 +96,14 @@
                                                     }
                                                 }
                                             }
+                                            // Use the actual unit price from the bill item, fallback to matched item price
+                                            double unitPrice = billItem.getUnitPrice() > 0 ? billItem.getUnitPrice() : 
+                                                             (matchedItem != null ? matchedItem.getUnitPrice() : 0);
                                 %>
-                                <div class="row g-2 mb-2 bill-item">
+                                <div class="row g-2 mb-2 bill-item" data-item-id="<%= billItem.getItemId() %>">
                                     <div class="col-md-4">
                                         <label class="form-label">Item</label>
-                                        <select class="form-select" name="itemIds[]" required>
+                                        <select class="form-select item-select" name="itemIds[]" required>
                                             <option value="">Select item</option>
                                             <%
                                                 if (allItems != null) {
@@ -117,24 +121,23 @@
                                     </div>
                                     <div class="col-md-2">
                                         <label class="form-label">Quantity</label>
-                                        <input type="number" class="form-control" name="quantities[]"
+                                        <input type="number" class="form-control quantity-input" name="quantities[]"
                                                placeholder="Qty" min="1" value="<%= billItem.getQuantity() %>" required>
                                     </div>
                                     <div class="col-md-3">
                                         <label class="form-label">Unit Price</label>
                                         <div class="input-group">
                                             <span class="input-group-text">$</span>
-                                            <input type="number" class="form-control" name="unitPrices[]"
+                                            <input type="number" class="form-control price-input" name="unitPrices[]"
                                                    placeholder="Price" step="0.01" min="0"
-                                                   value="<%= matchedItem != null ? matchedItem.getUnitPrice() : billItem.getUnitPrice() %>" required>
+                                                   value="<%= String.format("%.2f", unitPrice) %>" required>
                                         </div>
                                     </div>
                                     <div class="col-md-2">
                                         <label class="form-label">Line Total</label>
                                         <span class="form-control-plaintext item-total">
-                $<%= String.format("%.2f", billItem.getQuantity() *
-                                                (matchedItem != null ? matchedItem.getUnitPrice() : billItem.getUnitPrice())) %>
-            </span>
+                                            $<%= String.format("%.2f", billItem.getQuantity() * unitPrice) %>
+                                        </span>
                                     </div>
                                     <div class="col-md-1">
                                         <label class="form-label">&nbsp;</label>
@@ -154,10 +157,6 @@
                                 <%
                                     }
                                 %>
-<%--                                <div class="text-center text-muted py-4">--%>
-<%--                                    <i class="bi bi-inbox display-4 d-block mb-3"></i>--%>
-<%--                                    <h6>Loading bill items...</h6>--%>
-<%--                                </div>--%>
                             </div>
                             <button type="button" class="btn btn-outline-primary btn-sm" id="addItemBtn">
                                 <i class="bi bi-plus-circle me-2"></i>Add Item
@@ -293,6 +292,9 @@ document.addEventListener('DOMContentLoaded', function() {
     var customerSelect = document.getElementById('customerId');
     var dateInput = document.getElementById('billingDate');
 
+    // Initialize event listeners for existing bill items
+    initializeExistingItems();
+
     // Add new item row
     if (addItemBtn) {
         addItemBtn.addEventListener('click', function() {
@@ -318,13 +320,50 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
+    function initializeExistingItems() {
+        var existingItems = document.querySelectorAll('.bill-item');
+        existingItems.forEach(function(item) {
+            var itemSelect = item.querySelector('.item-select');
+            var qtyInput = item.querySelector('.quantity-input');
+            var priceInput = item.querySelector('.price-input');
+
+            // Item selection change
+            if (itemSelect) {
+                itemSelect.addEventListener('change', function() {
+                    var selectedOption = this.options[this.selectedIndex];
+                    if (selectedOption.dataset.price) {
+                        priceInput.value = selectedOption.dataset.price;
+                        updateItemTotal(item);
+                        updateTotals();
+                    }
+                });
+            }
+
+            // Quantity change
+            if (qtyInput) {
+                qtyInput.addEventListener('input', function() {
+                    updateItemTotal(item);
+                    updateTotals();
+                });
+            }
+
+            // Price change
+            if (priceInput) {
+                priceInput.addEventListener('input', function() {
+                    updateItemTotal(item);
+                    updateTotals();
+                });
+            }
+        });
+    }
+
     function createItemRow() {
         var itemRow = document.createElement('div');
         itemRow.className = 'row g-2 mb-2 bill-item';
         itemRow.innerHTML = `
             <div class="col-md-4">
                 <label class="form-label">Item</label>
-                <select class="form-select" name="itemIds[]" required>
+                <select class="form-select item-select" name="itemIds[]" required>
                     <option value="">Select item</option>
                     <%
                         List<ItemDTO> items = (List<ItemDTO>) request.getAttribute("items");
@@ -342,14 +381,14 @@ document.addEventListener('DOMContentLoaded', function() {
             </div>
             <div class="col-md-2">
                 <label class="form-label">Quantity</label>
-                <input type="number" class="form-control" name="quantities[]"
+                <input type="number" class="form-control quantity-input" name="quantities[]"
                        placeholder="Qty" min="1" value="1" required>
             </div>
             <div class="col-md-3">
                 <label class="form-label">Unit Price</label>
                 <div class="input-group">
                     <span class="input-group-text">$</span>
-                    <input type="number" class="form-control" name="unitPrices[]"
+                    <input type="number" class="form-control price-input" name="unitPrices[]"
                            placeholder="Price" step="0.01" min="0" required>
                 </div>
             </div>
@@ -374,20 +413,28 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         });
 
-        var itemSelect = itemRow.querySelector('[name="itemIds[]"]');
+        var itemSelect = itemRow.querySelector('.item-select');
+        var qtyInput = itemRow.querySelector('.quantity-input');
+        var priceInput = itemRow.querySelector('.price-input');
+
         itemSelect.addEventListener('change', function() {
             var selectedOption = this.options[this.selectedIndex];
-            var priceInput = itemRow.querySelector('[name="unitPrices[]"]');
             if (selectedOption.dataset.price) {
                 priceInput.value = selectedOption.dataset.price;
+                updateItemTotal(itemRow);
                 updateTotals();
             }
         });
 
-        var qtyInput = itemRow.querySelector('[name="quantities[]"]');
-        var priceInput = itemRow.querySelector('[name="unitPrices[]"]');
-        qtyInput.addEventListener('input', updateTotals);
-        priceInput.addEventListener('input', updateTotals);
+        qtyInput.addEventListener('input', function() {
+            updateItemTotal(itemRow);
+            updateTotals();
+        });
+
+        priceInput.addEventListener('input', function() {
+            updateItemTotal(itemRow);
+            updateTotals();
+        });
 
         return itemRow;
     }
@@ -402,6 +449,13 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
 
+    function updateItemTotal(itemElement) {
+        var qty = parseFloat(itemElement.querySelector('.quantity-input').value) || 0;
+        var price = parseFloat(itemElement.querySelector('.price-input').value) || 0;
+        var itemTotal = qty * price;
+        itemElement.querySelector('.item-total').textContent = '$' + itemTotal.toFixed(2);
+    }
+
     function updateTotals() {
         var total = 0;
         var itemCount = 0;
@@ -409,15 +463,14 @@ document.addEventListener('DOMContentLoaded', function() {
 
         for (var i = 0; i < items.length; i++) {
             var item = items[i];
-            var qty = parseFloat(item.querySelector('[name="quantities[]"]').value) || 0;
-            var price = parseFloat(item.querySelector('[name="unitPrices[]"]').value) || 0;
+            var qty = parseFloat(item.querySelector('.quantity-input').value) || 0;
+            var price = parseFloat(item.querySelector('.price-input').value) || 0;
             var itemTotal = qty * price;
 
             if (qty > 0 && price > 0) {
                 itemCount++;
             }
 
-            item.querySelector('.item-total').textContent = '$' + itemTotal.toFixed(2);
             total += itemTotal;
         }
 
@@ -430,7 +483,13 @@ document.addEventListener('DOMContentLoaded', function() {
         document.getElementById('totalAmount').textContent = '$' + grandTotal.toFixed(2);
         document.getElementById('summaryTotal').textContent = '$' + grandTotal.toFixed(2);
         document.getElementById('itemCount').textContent = itemCount + ' items';
+        
+        // Update hidden input for form submission
+        document.getElementById('totalAmountInput').value = grandTotal.toFixed(2);
     }
+
+    // Initial calculation
+    updateTotals();
 
     // Auto-hide alerts
     setTimeout(function() {

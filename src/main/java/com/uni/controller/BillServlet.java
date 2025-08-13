@@ -143,31 +143,67 @@ public class BillServlet extends HttpServlet {
     private BillDTO extractBillDTOUpdate(HttpServletRequest request) {
         int id = request.getParameter("id") != null ? Integer.parseInt(request.getParameter("id")) : 0;
         int customerId = Integer.parseInt(request.getParameter("customerId"));
-        String status = request.getParameter("status");
-        double totalAmount = Double.parseDouble(request.getParameter("totalAmount"));
+        String status = "Pending"; // Default status for updates
+        double totalAmount = 0.0;
+        
+        // Get total amount from form
+        String totalAmountParam = request.getParameter("totalAmount");
+        if (totalAmountParam != null && !totalAmountParam.trim().isEmpty()) {
+            try {
+                totalAmount = Double.parseDouble(totalAmountParam);
+            } catch (NumberFormatException e) {
+                totalAmount = 0.0;
+            }
+        }
 
-        // Optional: parse custom billing date or use current
+        // Parse billing date or use current
         Date billingDate = new Date();
+        String billingDateParam = request.getParameter("billingDate");
+        if (billingDateParam != null && !billingDateParam.trim().isEmpty()) {
+            try {
+                // Parse the date string to Date object
+                java.time.LocalDate localDate = java.time.LocalDate.parse(billingDateParam);
+                billingDate = java.sql.Date.valueOf(localDate);
+            } catch (Exception e) {
+                // If parsing fails, try to use the original bill's billing date
+                try {
+                    BillDTO originalBill = billService.getBillById(id);
+                    if (originalBill != null && originalBill.getBillingDate() != null) {
+                        billingDate = originalBill.getBillingDate();
+                    }
+                } catch (Exception ex) {
+                    billingDate = new Date();
+                }
+            }
+        }
 
         // Extract bill items
         List<BillItemDTO> billItems = new ArrayList<>();
         String[] itemIds = request.getParameterValues("itemIds[]");
         String[] quantities = request.getParameterValues("quantities[]");
         String[] unitPrices = request.getParameterValues("unitPrices[]");
-//        String[] lineTotals = request.getParameterValues("lineTotals[]");
 
         if (itemIds != null) {
             for (int i = 0; i < itemIds.length; i++) {
-                BillItemDTO item = new BillItemDTO(
-                        0,
-                        id,
-                        Integer.parseInt(itemIds[i]),
-                        Integer.parseInt(quantities[i]),
-                        Double.parseDouble(unitPrices[i]),
-                        0
-//                        Double.parseDouble(lineTotals[i])
-                );
-                billItems.add(item);
+                if (itemIds[i] != null && !itemIds[i].trim().isEmpty() &&
+                    quantities[i] != null && !quantities[i].trim().isEmpty() &&
+                    unitPrices[i] != null && !unitPrices[i].trim().isEmpty()) {
+                    
+                    try {
+                        BillItemDTO item = new BillItemDTO(
+                            0,
+                            id,
+                            Integer.parseInt(itemIds[i]),
+                            Integer.parseInt(quantities[i]),
+                            Double.parseDouble(unitPrices[i]),
+                            0
+                        );
+                        billItems.add(item);
+                    } catch (NumberFormatException e) {
+                        // Skip invalid items
+                        continue;
+                    }
+                }
             }
         }
 
