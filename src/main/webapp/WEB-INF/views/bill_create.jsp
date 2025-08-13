@@ -50,7 +50,7 @@
                                 <option value="">Select a customer</option>
                                 <%
                                     List<CustomerDTO> customers = (List<CustomerDTO>) request.getAttribute("customers");
-                                    if (customers != null) {
+                                    if (customers != null && !customers.isEmpty()) {
                                         for (CustomerDTO customer : customers) {
                                 %>
                                 <option value="<%= customer.getId() %>">
@@ -79,7 +79,7 @@
                                             <option value="">Select item</option>
                                             <%
                                                 List<ItemDTO> items = (List<ItemDTO>) request.getAttribute("items");
-                                                if (items != null) {
+                                                if (items != null && !items.isEmpty()) {
                                                     for (ItemDTO item : items) {
                                             %>
                                             <option value="<%= item.getId() %>" data-price="<%= item.getUnitPrice() %>">
@@ -106,7 +106,7 @@
                                     </div>
                                     <div class="col-md-2">
                                         <label class="form-label">Line Total</label>
-                                        <span class="form-control-plaintext item-total">$0.00</span>
+                                        <span class="form-control-plaintext item-total text-dark">$0.00</span>
                                     </div>
                                     <div class="col-md-1">
                                         <label class="form-label">&nbsp;</label>
@@ -126,16 +126,16 @@
                             <div class="row">
                                 <div class="col-md-6 offset-md-6">
                                     <div class="d-flex justify-content-between mb-2">
-                                        <span>Subtotal:</span>
-                                        <span id="subtotal">$0.00</span>
+                                        <span class="text-dark">Subtotal:</span>
+                                        <span id="subtotal" class="text-dark">$0.00</span>
                                     </div>
                                     <div class="d-flex justify-content-between mb-2">
-                                        <span>Tax (10%):</span>
-                                        <span id="tax">$0.00</span>
+                                        <span class="text-dark">Tax (10%):</span>
+                                        <span id="tax" class="text-dark">$0.00</span>
                                     </div>
                                     <hr>
                                     <div class="d-flex justify-content-between">
-                                        <strong>Total Amount:</strong>
+                                        <strong class="text-dark">Total Amount:</strong>
                                         <strong class="text-primary fs-5" id="totalAmount">$0.00</strong>
                                     </div>
                                 </div>
@@ -168,20 +168,20 @@
             <div class="card-body">
                 <div class="mb-3">
                     <small class="text-muted">Customer</small>
-                    <div id="selectedCustomer">None selected</div>
+                    <div id="selectedCustomer" class="text-dark">None selected</div>
                 </div>
                 <div class="mb-3">
                     <small class="text-muted">Bill Date</small>
-                    <div id="selectedDate"><%= java.time.LocalDate.now() %></div>
+                    <div id="selectedDate" class="text-dark"><%= java.time.LocalDate.now() %></div>
                 </div>
                 <div class="mb-3">
                     <small class="text-muted">Items</small>
-                    <div id="itemCount">0 items</div>
+                    <div id="itemCount" class="text-dark">0 items</div>
                 </div>
                 <hr>
                 <div class="d-flex justify-content-between">
-                    <strong>Total:</strong>
-                    <strong id="summaryTotal">$0.00</strong>
+                    <strong class="text-dark">Total:</strong>
+                    <strong id="summaryTotal" class="text-dark">$0.00</strong>
                 </div>
             </div>
         </div>
@@ -320,10 +320,10 @@ document.addEventListener('DOMContentLoaded', function() {
     // Auto-hide alerts
     setTimeout(function() {
         var alerts = document.querySelectorAll('.alert');
-        for (var i = 0; i < alerts.length; i++) {
-            var bsAlert = new bootstrap.Alert(alerts[i]);
+        alerts.forEach(function(alert) {
+            var bsAlert = new bootstrap.Alert(alert);
             bsAlert.close();
-        }
+        });
     }, 5000);
 });
 </script>
@@ -336,6 +336,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
 .card {
     border-radius: 0.75rem;
+    background-color: #ffffff;
 }
 
 .bill-item {
@@ -343,6 +344,15 @@ document.addEventListener('DOMContentLoaded', function() {
     padding: 1rem;
     border-radius: 0.5rem;
     border: 1px solid #e9ecef;
+}
+
+.text-dark {
+    color: #212529 !important;
+}
+
+.form-label {
+    color: #212529;
+    font-weight: 500;
 }
 </style>
 

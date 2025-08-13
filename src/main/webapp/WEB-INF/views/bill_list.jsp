@@ -1,13 +1,15 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ page import="com.uni.dto.BillDTO" %>
 <%@ page import="java.util.List" %>
+<%@ page import="com.uni.dto.CustomerDTO" %>
+<%@ page import="com.uni.dto.ItemDTO" %>
 
 <jsp:include page="header.jsp">
     <jsp:param name="pageTitle" value="Bills" />
 </jsp:include>
 
 <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
-    <h1 class="h2">Bill Management</h1>
+    <h1 class="h2 text-dark">Bill Management</h1>
     <div class="btn-toolbar mb-2 mb-md-0">
         <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addBillModal">
             <i class="bi bi-plus-circle me-2"></i>Create Bill
@@ -46,7 +48,7 @@
 <!-- Bills Table -->
 <div class="card border-0 shadow-sm">
     <div class="card-header bg-transparent border-0">
-        <h5 class="mb-0">
+        <h5 class="mb-0 text-dark">
             <i class="bi bi-receipt me-2 text-warning"></i>
             Bill Records
         </h5>
@@ -67,13 +69,21 @@
                 <tbody>
                     <%
                         List<BillDTO> bills = (List<BillDTO>) request.getAttribute("bills");
+                        List<CustomerDTO> customers = (List<CustomerDTO>) request.getAttribute("customers");
+                        String customerName = "Unknown";
                         if (bills != null && !bills.isEmpty()) {
                             for (BillDTO obj : bills) {
+                                for (CustomerDTO customer : customers) {
+                                    if (customer.getId() == obj.getCustomerId()) {
+                                        customerName = customer.getName() != null ? customer.getName() : "Customer #" + customer.getId();
+                                        break;
+                                    }
+                                }
                     %>
                     <tr>
                         <td><span class="badge bg-secondary">#<%= obj.getId() %></span></td>
-                        <td><strong><%= obj.getCustomerId() != 0 ? obj.getCustomerId() : "N/A" %></strong></td>
-                        <td><%= obj.getBillingDate() != null ? obj.getBillingDate() : "N/A" %></td>
+                        <td><strong class="text-dark"><%=  customerName %></strong></td>
+                        <td class="text-dark"><%= obj.getBillingDate() != null ? obj.getBillingDate() : "N/A" %></td>
                         <td>
                             <span class="badge bg-success">$<%= String.format("%.2f", obj.getTotalAmount()) %></span>
                         </td>
@@ -82,16 +92,16 @@
                         </td>
                         <td class="text-center">
                             <div class="btn-group" role="group">
-                                <a href="<%= request.getContextPath() %>/bills?id=<%= obj.getId() %>" 
-                                   class="btn btn-outline-primary btn-sm">
+                                <a href="<%= request.getContextPath() %>/bill-summary?id=<%= obj.getId() %>" 
+                                   class="btn btn-outline-info btn-sm" title="View Summary">
                                     <i class="bi bi-eye"></i>
                                 </a>
                                 <a href="<%= request.getContextPath() %>/bills?id=<%= obj.getId() %>&action=edit" 
-                                   class="btn btn-outline-warning btn-sm">
+                                   class="btn btn-outline-warning btn-sm" title="Edit Bill">
                                     <i class="bi bi-pencil"></i>
                                 </a>
                                 <button type="button" class="btn btn-outline-danger btn-sm" 
-                                        onclick="deleteBill(<%= obj.getId() %>, 'Unknown')">
+                                        onclick="deleteBill(<%= obj.getId() %>, 'Unknown')" title="Delete Bill">
                                     <i class="bi bi-trash"></i>
                                 </button>
                             </div>
@@ -104,8 +114,8 @@
                     <tr>
                         <td colspan="6" class="text-center text-muted py-4">
                             <i class="bi bi-inbox display-4 d-block mb-3"></i>
-                            <h5>No bills found</h5>
-                            <p class="mb-0">Start by creating your first bill using the button above.</p>
+                            <h5 class="text-dark">No bills found</h5>
+                            <p class="text-muted mb-0">Start by creating your first bill using the button above.</p>
                         </td>
                     </tr>
                     <%
@@ -122,7 +132,7 @@
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="addBillModalLabel">
+                <h5 class="modal-title text-dark" id="addBillModalLabel">
                     <i class="bi bi-plus-circle me-2 text-warning"></i>
                     Create New Bill
                 </h5>
@@ -134,24 +144,44 @@
                     
                     <div class="row g-3">
                         <div class="col-md-6">
-                            <label for="customerId" class="form-label">Customer <span class="text-danger">*</span></label>
+                            <label for="customerId" class="form-label text-dark">Customer <span class="text-danger">*</span></label>
                             <select class="form-select" id="customerId" name="customerId" required>
                                 <option value="">Select a customer</option>
+                                <%
+                                    List<CustomerDTO> customersList = (List<CustomerDTO>) request.getAttribute("customers");
+                                    if (customersList != null) {
+                                        for (CustomerDTO customer : customersList) {
+                                %>
+                                <option value="<%= customer.getId() %>"><%= customer.getName() %></option>
+                                <%
+                                        }
+                                    }
+                                %>
                             </select>
                         </div>
                         <div class="col-md-6">
-                            <label for="billingDate" class="form-label">Bill Date <span class="text-danger">*</span></label>
+                            <label for="billingDate" class="form-label text-dark">Bill Date <span class="text-danger">*</span></label>
                             <input type="date" class="form-control" id="billingDate" name="billingDate" required>
                         </div>
                         
                         <div class="col-12">
                             <hr>
-                            <h6 class="mb-3">Bill Items</h6>
+                            <h6 class="mb-3 text-dark">Bill Items</h6>
                             <div id="billItems">
                                 <div class="row g-2 mb-2 bill-item">
                                     <div class="col-md-4">
                                         <select class="form-select" name="itemIds[]" required>
                                             <option value="">Select item</option>
+                                            <%
+                                                List<ItemDTO> itemList = (List<ItemDTO>) request.getAttribute("items");
+                                                if (itemList != null) {
+                                                    for (ItemDTO item : itemList) {
+                                            %>
+                                            <option value="<%= item.getId() %>"><%= item.getName() %></option>
+                                            <%
+                                                    }
+                                                }
+                                            %>
                                         </select>
                                     </div>
                                     <div class="col-md-2">
@@ -163,7 +193,7 @@
                                                placeholder="Price" step="0.01" min="0" required>
                                     </div>
                                     <div class="col-md-2">
-                                        <span class="form-control-plaintext item-total">$0.00</span>
+                                        <span class="form-control-plaintext item-total text-dark">$0.00</span>
                                     </div>
                                     <div class="col-md-1">
                                         <button type="button" class="btn btn-outline-danger btn-sm remove-item">
@@ -182,8 +212,9 @@
                             <div class="row">
                                 <div class="col-md-6 offset-md-6">
                                     <div class="d-flex justify-content-between">
-                                        <strong>Total Amount:</strong>
+                                        <strong class="text-dark">Total Amount:</strong>
                                         <strong class="text-primary" id="totalAmount">$0.00</strong>
+                                        <input type="hidden" name="totalAmount" id="totalAmountInput" value="0.00"/>
                                     </div>
                                 </div>
                             </div>
@@ -213,7 +244,7 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                <p>Are you sure you want to delete this bill?</p>
+                <p class="text-dark">Are you sure you want to delete this bill?</p>
                 <p class="text-muted small">This action cannot be undone.</p>
             </div>
             <div class="modal-footer">
@@ -282,16 +313,44 @@ document.addEventListener('DOMContentLoaded', function() {
             total += itemTotal;
         }
         document.getElementById('totalAmount').textContent = '$' + total.toFixed(2);
+        document.getElementById('totalAmountInput').value = total.toFixed(2);
     }
     
     setTimeout(function() {
         var alerts = document.querySelectorAll('.alert');
-        for (var i = 0; i < alerts.length; i++) {
-            var bsAlert = new bootstrap.Alert(alerts[i]);
+        alerts.forEach(function(alert) {
+            var bsAlert = new bootstrap.Alert(alert);
             bsAlert.close();
-        }
+        });
     }, 5000);
 });
 </script>
+
+<style>
+.card {
+    border-radius: 0.75rem;
+    background-color: #ffffff;
+}
+
+.text-dark {
+    color: #212529 !important;
+}
+
+.text-muted {
+    color: #6c757d !important;
+}
+
+.form-label {
+    color: #212529;
+    font-weight: 500;
+}
+
+.bill-item {
+    background-color: #f8f9fa;
+    padding: 1rem;
+    border-radius: 0.5rem;
+    border: 1px solid #e9ecef;
+}
+</style>
 
 <jsp:include page="footer.jsp" />

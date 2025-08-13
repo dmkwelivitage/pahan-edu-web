@@ -2,10 +2,12 @@ package com.uni.controller;
 
 import com.uni.dto.BillDTO;
 import com.uni.dto.BillItemDTO;
+import com.uni.dto.CustomerDTO;
 import com.uni.dto.ItemDTO;
 import com.uni.model.Item;
 import com.uni.service.BillService;
 
+import com.uni.service.CustomerService;
 import com.uni.service.ItemService;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
@@ -19,6 +21,7 @@ import java.util.List;
 public class BillServlet extends HttpServlet {
     private final BillService billService = new BillService();
     private final ItemService itemService = new ItemService();
+    private final CustomerService customerService = new CustomerService();
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
@@ -56,7 +59,11 @@ public class BillServlet extends HttpServlet {
                 return;
             }
             List<BillDTO> bills = billService.getAllBills();
+            List<CustomerDTO> customers = customerService.getAllCustomers();
+            List<ItemDTO> items = itemService.getAllItems();
             request.setAttribute("bills", bills);
+            request.setAttribute("customers", customers);
+            request.setAttribute("items", items);
             request.getRequestDispatcher("/WEB-INF/views/bill_list.jsp").forward(request, response);
         }
     }
@@ -100,7 +107,7 @@ public class BillServlet extends HttpServlet {
     private BillDTO extractBillDTO(HttpServletRequest request) {
         int id = request.getParameter("id") != null ? Integer.parseInt(request.getParameter("id")) : 0;
         int customerId = Integer.parseInt(request.getParameter("customerId"));
-        String status = request.getParameter("status");
+        String status = "Pending";
         double totalAmount = Double.parseDouble(request.getParameter("totalAmount"));
 
         // Optional: parse custom billing date or use current
@@ -114,7 +121,7 @@ public class BillServlet extends HttpServlet {
 //        String[] lineTotals = request.getParameterValues("lineTotals[]");
 
         if (itemIds != null) {
-            for (int i = 0; i < itemIds.length - 1; i++) {
+            for (int i = 0; i < itemIds.length; i++) {
                 BillItemDTO item = new BillItemDTO(
                         0,
                         id,

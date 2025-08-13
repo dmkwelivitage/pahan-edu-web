@@ -9,17 +9,17 @@
 </jsp:include>
 
 <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
-    <h1 class="h2">Dashboard</h1>
+    <h1 class="h2 text-dark">Dashboard</h1>
     <div class="btn-toolbar mb-2 mb-md-0">
         <div class="btn-group me-2">
             <span class="badge bg-primary fs-6 px-3 py-2">
                 <i class="bi bi-person-circle me-2"></i>
                 <%= user.getRole() %>
             </span>
-          <a href="<%= request.getContextPath() %>/logout" class="btn btn-outline-secondary">
-              <i class="bi bi-box-arrow-right me-2"></i>Logout
-            </a>
         </div>
+        <a href="<%= request.getContextPath() %>/logout" class="btn btn-outline-secondary">
+            <i class="bi bi-box-arrow-right me-2"></i>Logout
+        </a>
     </div>
 </div>
 
@@ -32,7 +32,7 @@
                     <div class="display-4 text-primary mb-3">
                         <i class="bi bi-emoji-smile"></i>
                     </div>
-                    <h2 class="card-title mb-3">Welcome back, <%= user.getUsername() %>!</h2>
+                    <h2 class="card-title mb-3 text-dark">Welcome back, <%= user.getUsername() %>!</h2>
                     <p class="card-text text-muted fs-5">Manage your customers, items, and bills efficiently</p>
                 </div>
             </div>
@@ -50,7 +50,7 @@
                         <i class="bi bi-people text-white fs-3"></i>
                     </div>
                 </div>
-                <h5 class="card-title">Customers</h5>
+                <h5 class="card-title text-dark">Customers</h5>
                 <p class="card-text text-muted">Manage customer information and accounts</p>
                 <a href="<%= request.getContextPath() %>/customers" class="btn btn-primary btn-sm">
                     <i class="bi bi-arrow-right me-1"></i>Manage
@@ -67,7 +67,7 @@
                         <i class="bi bi-box text-white fs-3"></i>
                     </div>
                 </div>
-                <h5 class="card-title">Items</h5>
+                <h5 class="card-title text-dark">Items</h5>
                 <p class="card-text text-muted">Manage inventory and product catalog</p>
                 <a href="<%= request.getContextPath() %>/items" class="btn btn-success btn-sm">
                     <i class="bi bi-arrow-right me-1"></i>Manage
@@ -84,7 +84,7 @@
                         <i class="bi bi-receipt text-white fs-3"></i>
                     </div>
                 </div>
-                <h5 class="card-title">Bills</h5>
+                <h5 class="card-title text-dark">Bills</h5>
                 <p class="card-text text-muted">Create and manage customer bills</p>
                 <a href="<%= request.getContextPath() %>/bills" class="btn btn-warning btn-sm">
                     <i class="bi bi-arrow-right me-1"></i>Manage
@@ -101,7 +101,7 @@
                         <i class="bi bi-question-circle text-white fs-3"></i>
                     </div>
                 </div>
-                <h5 class="card-title">Help</h5>
+                <h5 class="card-title text-dark">Help</h5>
                 <p class="card-text text-muted">Get assistance and documentation</p>
                 <a href="<%= request.getContextPath() %>/help" class="btn btn-info btn-sm">
                     <i class="bi bi-arrow-right me-1"></i>Get Help
@@ -116,7 +116,7 @@
     <div class="col-12">
         <div class="card border-0 shadow-sm">
             <div class="card-header bg-transparent border-0">
-                <h5 class="mb-0">
+                <h5 class="mb-0 text-dark">
                     <i class="bi bi-graph-up me-2 text-success"></i>
                     Quick Overview
                 </h5>
@@ -182,6 +182,22 @@
     
     .bg-info.bg-gradient {
         background-image: linear-gradient(135deg, var(--bs-info), #0dcaf0);
+    }
+    
+    .text-dark {
+        color: #212529 !important;
+    }
+    
+    .text-muted {
+        color: #6c757d !important;
+    }
+    
+    .card-title {
+        color: #212529 !important;
+    }
+    
+    .card-text {
+        color: #6c757d !important;
     }
 </style>
 

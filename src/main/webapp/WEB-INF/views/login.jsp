@@ -60,6 +60,7 @@
             border-radius: 10px;
             border: 2px solid #e9ecef;
             transition: all 0.3s ease;
+            margin-left: 2.5rem;
         }
         
         .form-control:focus {
@@ -101,6 +102,7 @@
         }
         
         .input-group .form-control {
+            color: #1e1e1e;
             border-left: none;
         }
         

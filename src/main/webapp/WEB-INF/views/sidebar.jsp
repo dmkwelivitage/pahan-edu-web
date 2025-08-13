@@ -14,6 +14,12 @@
                 </a>
             </li>
             <li class="nav-item">
+                <a class="nav-link <%= request.getRequestURI().contains("/customer-lookup") ? "active" : "" %>" href="<%= request.getContextPath() %>/customer-lookup">
+                    <i class="bi bi-search me-2"></i>
+                    Customer Lookup
+                </a>
+            </li>
+            <li class="nav-item">
                 <a class="nav-link <%= request.getRequestURI().contains("/items") ? "active" : "" %>" href="<%= request.getContextPath() %>/items">
                     <i class="bi bi-box me-2"></i>
                     Items

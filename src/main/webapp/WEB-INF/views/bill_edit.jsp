@@ -143,11 +143,17 @@
                 <div class="mb-3">
                     <small class="text-muted">Customer</small>
                     <div id="selectedCustomer">
-                        <% if (bill.getCustomerName() != null) { %>
-                            <%= bill.getCustomerName() %>
+                        <%
+                            if (customers != null && !customers.isEmpty()) {
+                            for (CustomerDTO customer : customers){
+                            if (bill.getCustomerId() == customer.getId()) { %>
+                            <%= customer.getName() %>
                         <% } else { %>
                             Unknown
-                        <% } %>
+                        <% }
+                        }
+                        }
+                        %>
                     </div>
                 </div>
                 <div class="mb-3">
