@@ -3,6 +3,7 @@
 <%@ page import="com.uni.dto.CustomerDTO" %>
 <%@ page import="com.uni.dto.ItemDTO" %>
 <%@ page import="java.util.List" %>
+<%@ page import="com.uni.dto.BillItemDTO" %>
 
 <jsp:include page="header.jsp">
     <jsp:param name="pageTitle" value="Edit Bill" />
@@ -49,7 +50,7 @@
                 <form action="<%= request.getContextPath() %>/bills" method="post">
                     <input type="hidden" name="action" value="update"/>
                     <input type="hidden" name="id" value="<%= bill.getId() %>"/>
-                    
+
                     <div class="row g-3">
                         <div class="col-md-6">
                             <label for="customerId" class="form-label">Customer <span class="text-danger">*</span></label>
@@ -72,25 +73,97 @@
                         </div>
                         <div class="col-md-6">
                             <label for="billingDate" class="form-label">Bill Date <span class="text-danger">*</span></label>
-                            <input type="date" class="form-control" id="billingDate" name="billingDate" 
+                            <input type="date" class="form-control" id="billingDate" name="billingDate"
                                    value="<%= bill.getBillingDate() != null ? bill.getBillingDate() : java.time.LocalDate.now() %>" required>
                         </div>
-                        
+
                         <div class="col-12">
                             <hr>
                             <h6 class="mb-3">Bill Items</h6>
                             <div id="billItems">
-                                <!-- Bill items will be populated here -->
+                                <%
+                                    List<BillItemDTO> billItemList = bill.getItems(); // From BillDTO
+                                    List<ItemDTO> allItems = (List<ItemDTO>) request.getAttribute("items"); // All available items
+                                    if (billItemList != null && !billItemList.isEmpty()) {
+                                        for (BillItemDTO billItem : billItemList) {
+                                            ItemDTO matchedItem = null;
+                                            if (allItems != null) {
+                                                for (ItemDTO i : allItems) {
+                                                    if (i.getId() == billItem.getItemId()) {
+                                                        matchedItem = i;
+                                                        break;
+                                                    }
+                                                }
+                                            }
+                                %>
+                                <div class="row g-2 mb-2 bill-item">
+                                    <div class="col-md-4">
+                                        <label class="form-label">Item</label>
+                                        <select class="form-select" name="itemIds[]" required>
+                                            <option value="">Select item</option>
+                                            <%
+                                                if (allItems != null) {
+                                                    for (ItemDTO option : allItems) {
+                                                        String selected = (option.getId() == billItem.getItemId()) ? "selected" : "";
+                                            %>
+                                            <option value="<%= option.getId() %>" data-price="<%= option.getUnitPrice() %>" <%= selected %>>
+                                                <%= option.getName() %> - $<%= String.format("%.2f", option.getUnitPrice()) %>
+                                            </option>
+                                            <%
+                                                    }
+                                                }
+                                            %>
+                                        </select>
+                                    </div>
+                                    <div class="col-md-2">
+                                        <label class="form-label">Quantity</label>
+                                        <input type="number" class="form-control" name="quantities[]"
+                                               placeholder="Qty" min="1" value="<%= billItem.getQuantity() %>" required>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <label class="form-label">Unit Price</label>
+                                        <div class="input-group">
+                                            <span class="input-group-text">$</span>
+                                            <input type="number" class="form-control" name="unitPrices[]"
+                                                   placeholder="Price" step="0.01" min="0"
+                                                   value="<%= matchedItem != null ? matchedItem.getUnitPrice() : billItem.getUnitPrice() %>" required>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-2">
+                                        <label class="form-label">Line Total</label>
+                                        <span class="form-control-plaintext item-total">
+                $<%= String.format("%.2f", billItem.getQuantity() *
+                                                (matchedItem != null ? matchedItem.getUnitPrice() : billItem.getUnitPrice())) %>
+            </span>
+                                    </div>
+                                    <div class="col-md-1">
+                                        <label class="form-label">&nbsp;</label>
+                                        <button type="button" class="btn btn-outline-danger btn-sm remove-item d-block">
+                                            <i class="bi bi-trash"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                                <%
+                                    }
+                                } else {
+                                %>
                                 <div class="text-center text-muted py-4">
                                     <i class="bi bi-inbox display-4 d-block mb-3"></i>
-                                    <h6>Loading bill items...</h6>
+                                    <h6>No bill items found.</h6>
                                 </div>
+                                <%
+                                    }
+                                %>
+<%--                                <div class="text-center text-muted py-4">--%>
+<%--                                    <i class="bi bi-inbox display-4 d-block mb-3"></i>--%>
+<%--                                    <h6>Loading bill items...</h6>--%>
+<%--                                </div>--%>
                             </div>
                             <button type="button" class="btn btn-outline-primary btn-sm" id="addItemBtn">
                                 <i class="bi bi-plus-circle me-2"></i>Add Item
                             </button>
                         </div>
-                        
+
                         <div class="col-12">
                             <hr>
                             <div class="row">
@@ -112,7 +185,7 @@
                             </div>
                         </div>
                     </div>
-                    
+
                     <div class="d-flex justify-content-end gap-2 mt-4">
                         <a href="<%= request.getContextPath() %>/bills" class="btn btn-secondary">
                             <i class="bi bi-x-circle me-2"></i>Cancel
@@ -125,7 +198,7 @@
             </div>
         </div>
     </div>
-    
+
     <div class="col-lg-4">
         <!-- Bill Summary -->
         <div class="card border-0 shadow-sm mb-4">
@@ -148,9 +221,8 @@
                             for (CustomerDTO customer : customers){
                             if (bill.getCustomerId() == customer.getId()) { %>
                             <%= customer.getName() %>
-                        <% } else { %>
-                            Unknown
-                        <% }
+                        <% } else %>
+                        <%
                         }
                         }
                         %>
@@ -173,7 +245,7 @@
                 </div>
             </div>
         </div>
-        
+
         <!-- Actions -->
         <div class="card border-0 shadow-sm">
             <div class="card-header bg-transparent border-0">
@@ -220,7 +292,7 @@ document.addEventListener('DOMContentLoaded', function() {
     var billItems = document.getElementById('billItems');
     var customerSelect = document.getElementById('customerId');
     var dateInput = document.getElementById('billingDate');
-    
+
     // Add new item row
     if (addItemBtn) {
         addItemBtn.addEventListener('click', function() {
@@ -229,23 +301,23 @@ document.addEventListener('DOMContentLoaded', function() {
             updateTotals();
         });
     }
-    
+
     // Update customer selection display
     if (customerSelect) {
         customerSelect.addEventListener('change', function() {
             var selectedOption = this.options[this.selectedIndex];
-            document.getElementById('selectedCustomer').textContent = 
+            document.getElementById('selectedCustomer').textContent =
                 selectedOption.value ? selectedOption.text : 'Unknown';
         });
     }
-    
+
     // Update date display
     if (dateInput) {
         dateInput.addEventListener('change', function() {
             document.getElementById('selectedDate').textContent = this.value;
         });
     }
-    
+
     function createItemRow() {
         var itemRow = document.createElement('div');
         itemRow.className = 'row g-2 mb-2 bill-item';
@@ -270,14 +342,14 @@ document.addEventListener('DOMContentLoaded', function() {
             </div>
             <div class="col-md-2">
                 <label class="form-label">Quantity</label>
-                <input type="number" class="form-control" name="quantities[]" 
+                <input type="number" class="form-control" name="quantities[]"
                        placeholder="Qty" min="1" value="1" required>
             </div>
             <div class="col-md-3">
                 <label class="form-label">Unit Price</label>
                 <div class="input-group">
                     <span class="input-group-text">$</span>
-                    <input type="number" class="form-control" name="unitPrices[]" 
+                    <input type="number" class="form-control" name="unitPrices[]"
                            placeholder="Price" step="0.01" min="0" required>
                 </div>
             </div>
@@ -292,7 +364,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 </button>
             </div>
         `;
-        
+
         // Add event listeners to new row
         var removeBtn = itemRow.querySelector('.remove-item');
         removeBtn.addEventListener('click', function() {
@@ -301,7 +373,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 updateTotals();
             }
         });
-        
+
         var itemSelect = itemRow.querySelector('[name="itemIds[]"]');
         itemSelect.addEventListener('change', function() {
             var selectedOption = this.options[this.selectedIndex];
@@ -311,15 +383,15 @@ document.addEventListener('DOMContentLoaded', function() {
                 updateTotals();
             }
         });
-        
+
         var qtyInput = itemRow.querySelector('[name="quantities[]"]');
         var priceInput = itemRow.querySelector('[name="unitPrices[]"]');
         qtyInput.addEventListener('input', updateTotals);
         priceInput.addEventListener('input', updateTotals);
-        
+
         return itemRow;
     }
-    
+
     // Remove item functionality
     billItems.addEventListener('click', function(e) {
         if (e.target.classList.contains('remove-item') || e.target.closest('.remove-item')) {
@@ -329,37 +401,37 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         }
     });
-    
+
     function updateTotals() {
         var total = 0;
         var itemCount = 0;
         var items = document.querySelectorAll('.bill-item');
-        
+
         for (var i = 0; i < items.length; i++) {
             var item = items[i];
             var qty = parseFloat(item.querySelector('[name="quantities[]"]').value) || 0;
             var price = parseFloat(item.querySelector('[name="unitPrices[]"]').value) || 0;
             var itemTotal = qty * price;
-            
+
             if (qty > 0 && price > 0) {
                 itemCount++;
             }
-            
+
             item.querySelector('.item-total').textContent = '$' + itemTotal.toFixed(2);
             total += itemTotal;
         }
-        
+
         var subtotal = total;
         var tax = total * 0.1;
         var grandTotal = total + tax;
-        
+
         document.getElementById('subtotal').textContent = '$' + subtotal.toFixed(2);
         document.getElementById('tax').textContent = '$' + tax.toFixed(2);
         document.getElementById('totalAmount').textContent = '$' + grandTotal.toFixed(2);
         document.getElementById('summaryTotal').textContent = '$' + grandTotal.toFixed(2);
         document.getElementById('itemCount').textContent = itemCount + ' items';
     }
-    
+
     // Auto-hide alerts
     setTimeout(function() {
         var alerts = document.querySelectorAll('.alert');

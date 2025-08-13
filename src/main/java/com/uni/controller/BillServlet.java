@@ -50,6 +50,8 @@ public class BillServlet extends HttpServlet {
                     billItems.add(itemDTO);
                 }
             }
+            List<CustomerDTO> customers = customerService.getAllCustomers();
+            request.setAttribute("customers", customers);
             request.setAttribute("billItems", billItems);
             request.getRequestDispatcher("/WEB-INF/views/bill_edit.jsp").forward(request, response);
         } else {
