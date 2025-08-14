@@ -21,6 +21,8 @@
         body {
             background-color: #f8f9fa;
             color: #212529;
+            margin: 0;
+            padding: 0;
         }
         
         .navbar-brand img {
@@ -84,36 +86,36 @@
     </style>
 </head>
 <body>
-    <nav class="navbar navbar-expand-lg navbar-light shadow-sm">
-        <div class="container-fluid">
-            <a class="navbar-brand d-flex align-items-center" href="<%= request.getContextPath() %>/dashboard">
-                <img src="<%= request.getContextPath() %>/assets/img/logo2.png" alt="Pahan Edu" class="me-2">
-                <span class="fw-bold text-primary">Pahan Edu</span>
-            </a>
+<%--    <nav class="navbar navbar-expand-lg navbar-light shadow-sm">--%>
+<%--        <div class="container-fluid">--%>
+<%--            <a class="navbar-brand d-flex align-items-center" href="<%= request.getContextPath() %>/dashboard">--%>
+<%--                <img src="<%= request.getContextPath() %>/assets/img/logo2.png" alt="Pahan Edu" class="me-2">--%>
+<%--                <span class="fw-bold text-primary">Pahan Edu</span>--%>
+<%--            </a>--%>
 
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-                <span class="navbar-toggler-icon"></span>
-            </button>
+<%--            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">--%>
+<%--                <span class="navbar-toggler-icon"></span>--%>
+<%--            </button>--%>
 
-            <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav ms-auto">
-                    <% if (loggedUser != null) { %>
-                        <li class="nav-item">
-                            <div class="d-flex align-items-center">
-                                <div class="user-avatar me-2">
-                                    <%= loggedUser.getUsername().substring(0, 1).toUpperCase() %>
-                                </div>
-                                <div class="user-info">
-                                    <span class="fw-semibold"><%= loggedUser.getUsername() %></span>
-                                    <small class="text-muted d-block"><%= loggedUser.getRole() %></small>
-                                </div>
-                            </div>
-                        </li>
-                    <% } %>
-                </ul>
-            </div>
-        </div>
-    </nav>
+<%--            <div class="collapse navbar-collapse" id="navbarNav">--%>
+<%--                <ul class="navbar-nav ms-auto">--%>
+<%--                    <% if (loggedUser != null) { %>--%>
+<%--                        <li class="nav-item">--%>
+<%--                            <div class="d-flex align-items-center">--%>
+<%--                                <div class="user-avatar me-2">--%>
+<%--                                    <%= loggedUser.getUsername().substring(0, 1).toUpperCase() %>--%>
+<%--                                </div>--%>
+<%--                                <div class="user-info">--%>
+<%--                                    <span class="fw-semibold"><%= loggedUser.getUsername() %></span>--%>
+<%--                                    <small class="text-muted d-block"><%= loggedUser.getRole() %></small>--%>
+<%--                                </div>--%>
+<%--                            </div>--%>
+<%--                        </li>--%>
+<%--                    <% } %>--%>
+<%--                </ul>--%>
+<%--            </div>--%>
+<%--        </div>--%>
+<%--    </nav>--%>
     
     <div class="container-fluid">
         <div class="row">

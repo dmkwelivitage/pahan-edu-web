@@ -7,10 +7,10 @@
         <div class="container-fluid">
             <div class="row align-items-center">
                 <div class="col-md-6">
-                    <span class="text-muted">&copy; 2024 Pahan Edu. All rights reserved.</span>
+                    <span class="text-muted">&copy; 2025 Pahan Edu. All rights reserved.</span>
                 </div>
                 <div class="col-md-6 text-md-end">
-                    <span class="text-muted">Version 1.0.0</span>
+                    <span class="text-muted">Version 1.4.2</span>
                 </div>
             </div>
         </div>
@@ -23,6 +23,9 @@
     
     <style>
         .footer {
+            position: relative;
+            left: 17%;
+            width: 83%;
             margin-top: auto;
             background: linear-gradient(180deg, #ffffff 0%, #f8f9fa 100%);
             border-top: 1px solid #dee2e6;

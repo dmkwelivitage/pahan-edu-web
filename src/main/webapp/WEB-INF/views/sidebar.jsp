@@ -18,7 +18,7 @@
 
 <!-- Mobile Sidebar Toggle Button -->
 <button class="btn btn-primary d-md-none position-fixed" 
-        style="top: 70px; left: 10px; z-index: 1000;" 
+        style="top: 0; left: 0; z-index: 1000; width: 100%; height: 40px; border-radius: 0; border: none; background-color: #0d6efd;"
         type="button" 
         data-bs-toggle="offcanvas" 
         data-bs-target="#mobileSidebar">
@@ -156,7 +156,7 @@
     
     <!-- User Info and Logout at Bottom -->
     <div class="sidebar-footer border-top mt-auto">
-        <div class="user-info p-3">
+        <div class="user-info p-3 d-flex align-items-baseline">
             <div class="d-flex align-items-center mb-2">
                 <div class="user-avatar me-2">
                     <%= loggedUser != null ? loggedUser.getUsername().substring(0, 1).toUpperCase() : "U" %>
@@ -170,11 +170,13 @@
                     </div>
                 </div>
             </div>
+            <div class="d-flex align-items-center mb-2">
             <form action="<%= request.getContextPath() %>/logout" method="post" class="d-grid">
                 <button type="submit" class="btn btn-outline-danger btn-sm">
                     <i class="bi bi-box-arrow-right me-1"></i>Logout
                 </button>
             </form>
+            </div>
         </div>
     </div>
 </nav>
@@ -183,7 +185,7 @@
     /* Desktop Sidebar Styles */
     .sidebar {
         position: fixed;
-        top: 56px;
+        top: 0;
         bottom: 0;
         left: 0;
         z-index: 100;
@@ -260,7 +262,9 @@
     .sidebar-footer {
         margin-top: auto;
         background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
-        position: relative;
+        position: absolute;
+        bottom: 0;
+        width: 100%;
         z-index: 10;
     }
     
