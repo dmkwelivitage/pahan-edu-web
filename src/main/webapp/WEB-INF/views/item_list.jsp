@@ -44,17 +44,17 @@
 %>
 
 <!-- Items Table -->
-<div class="card border-0 shadow-sm">
-    <div class="card-header bg-transparent border-0">
+<div class="table-card">
+    <div class="card-header">
         <h5 class="mb-0">
             <i class="bi bi-box me-2 text-success"></i>
             Item Catalog
         </h5>
     </div>
-    <div class="card-body p-0">
+    <div class="card-body">
         <div class="table-responsive">
-            <table class="table table-hover mb-0">
-                <thead class="table-light">
+            <table class="modern-table">
+                <thead>
                     <tr>
                         <th scope="col">ID</th>
                         <th scope="col">Code</th>
@@ -83,7 +83,7 @@
                             <span class="badge bg-info"><%= obj.getStockQty() %></span>
                         </td>
                         <td class="text-center">
-                            <div class="btn-group" role="group">
+                            <div class="action-buttons">
                                 <a href="<%= request.getContextPath() %>/items?id=<%= obj.getId() %>" 
                                    class="btn btn-outline-primary btn-sm">
                                     <i class="bi bi-pencil"></i>

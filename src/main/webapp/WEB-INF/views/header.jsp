@@ -90,11 +90,11 @@
                 <img src="<%= request.getContextPath() %>/assets/img/logo2.png" alt="Pahan Edu" class="me-2">
                 <span class="fw-bold text-primary">Pahan Edu</span>
             </a>
-            
+
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
                 <span class="navbar-toggler-icon"></span>
             </button>
-            
+
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav ms-auto">
                     <% if (loggedUser != null) { %>

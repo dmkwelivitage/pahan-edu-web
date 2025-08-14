@@ -47,17 +47,17 @@
 %>
 
 <!-- Bills Table -->
-<div class="card border-0 shadow-sm">
-    <div class="card-header bg-transparent border-0">
+<div class="table-card">
+    <div class="card-header">
         <h5 class="mb-0 text-dark">
             <i class="bi bi-receipt me-2 text-warning"></i>
             Bill Records
         </h5>
     </div>
-    <div class="card-body p-0">
+    <div class="card-body">
         <div class="table-responsive">
-            <table class="table table-hover mb-0">
-                <thead class="table-light">
+            <table class="modern-table">
+                <thead>
                     <tr>
                         <th scope="col">Bill ID</th>
                         <th scope="col">Customer</th>
@@ -125,7 +125,7 @@
                             <span class="badge bg-primary">Active</span>
                         </td>
                         <td class="text-center">
-                            <div class="btn-group" role="group">
+                            <div class="action-buttons">
                                 <a href="<%= request.getContextPath() %>/bill?id=<%= obj.getId() %>" 
                                    class="btn btn-outline-info btn-sm" title="View Summary">
                                     <i class="bi bi-eye"></i>

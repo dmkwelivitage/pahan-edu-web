@@ -20,8 +20,8 @@
 
 <!-- Error Alert -->
 <%
-  String error = (String) request.getAttribute("error");
-  if (error != null && !error.isEmpty()) {
+    String error = (String) request.getAttribute("error");
+    if (error != null && !error.isEmpty()) {
 %>
 <div class="alert alert-danger alert-dismissible fade show" role="alert">
     <i class="bi bi-exclamation-triangle me-2"></i>
@@ -29,13 +29,13 @@
     <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
 </div>
 <%
-  }
+    }
 %>
 
 <!-- Success Alert -->
 <%
-  String success = (String) request.getAttribute("success");
-  if (success != null && !success.isEmpty()) {
+    String success = (String) request.getAttribute("success");
+    if (success != null && !success.isEmpty()) {
 %>
 <div class="alert alert-success alert-dismissible fade show" role="alert">
     <i class="bi bi-check-circle me-2"></i>
@@ -43,73 +43,73 @@
     <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
 </div>
 <%
-  }
+    }
 %>
 
 <!-- Customers Table -->
-<div class="card border-0 shadow-sm">
-    <div class="card-header bg-transparent border-0">
+<div class="table-card">
+    <div class="card-header">
         <h5 class="mb-0">
             <i class="bi bi-people me-2 text-primary"></i>
             Customer List
         </h5>
     </div>
-    <div class="card-body p-0">
+    <div class="card-body">
         <div class="table-responsive">
-            <table class="table table-hover mb-0">
-                <thead class="table-light">
-                    <tr>
-                        <th scope="col">ID</th>
-                        <th scope="col">Account Number</th>
-                        <th scope="col">Name</th>
-                        <th scope="col">Address</th>
-                        <th scope="col">Phone</th>
-                        <th scope="col">Units</th>
-                        <th scope="col" class="text-center">Actions</th>
-                    </tr>
+            <table class="modern-table">
+                <thead>
+                <tr>
+                    <th scope="col">ID</th>
+                    <th scope="col">Account Number</th>
+                    <th scope="col">Name</th>
+                    <th scope="col">Address</th>
+                    <th scope="col">Phone</th>
+                    <th scope="col">Units</th>
+                    <th scope="col" class="text-center">Actions</th>
+                </tr>
                 </thead>
                 <tbody>
-                    <%
-                        List<CustomerDTO> customers = (List<CustomerDTO>) request.getAttribute("customers");
-                        if (customers != null && !customers.isEmpty()) {
-                            for (CustomerDTO obj : customers) {
-                    %>
-                    <tr>
-                        <td><span class="badge bg-secondary"><%= obj.getId() %></span></td>
-                        <td><strong><%= obj.getAccountNumber() %></strong></td>
-                        <td><%= obj.getName() %></td>
-                        <td><%= obj.getAddress() != null ? obj.getAddress() : "-" %></td>
-                        <td><%= obj.getPhone() != null ? obj.getPhone() : "-" %></td>
-                        <td>
-                            <span class="badge bg-info"><%= obj.getUnitsConsumed() %></span>
-                        </td>
-                        <td class="text-center">
-                            <div class="btn-group" role="group">
-                                <a href="<%= request.getContextPath() %>/customers?id=<%= obj.getId() %>" 
-                                   class="btn btn-outline-primary btn-sm">
-                                    <i class="bi bi-pencil"></i>
-                                </a>
-                                <button type="button" class="btn btn-outline-danger btn-sm" 
-                                        onclick="deleteCustomer(<%= obj.getId() %>, '<%= obj.getName() %>')">
-                                    <i class="bi bi-trash"></i>
-                                </button>
-                            </div>
-                        </td>
-                    </tr>
-                    <%
-                            }
-                        } else {
-                    %>
-                    <tr>
-                        <td colspan="7" class="text-center text-muted py-4">
-                            <i class="bi bi-inbox display-4 d-block mb-3"></i>
-                            <h5>No customers found</h5>
-                            <p class="mb-0">Start by adding your first customer using the button above.</p>
-                        </td>
-                    </tr>
-                    <%
-                        }
-                    %>
+                <%
+                    List<CustomerDTO> customers = (List<CustomerDTO>) request.getAttribute("customers");
+                    if (customers != null && !customers.isEmpty()) {
+                        for (CustomerDTO obj : customers) {
+                %>
+                <tr>
+                    <td><span class="badge bg-secondary"><%= obj.getId() %></span></td>
+                    <td><strong><%= obj.getAccountNumber() %></strong></td>
+                    <td><%= obj.getName() %></td>
+                    <td><%= obj.getAddress() != null ? obj.getAddress() : "-" %></td>
+                    <td><%= obj.getPhone() != null ? obj.getPhone() : "-" %></td>
+                    <td>
+                        <span class="badge bg-info"><%= obj.getUnitsConsumed() %></span>
+                    </td>
+                    <td class="text-center">
+                        <div class="action-buttons">
+                            <a href="<%= request.getContextPath() %>/customers?id=<%= obj.getId() %>"
+                               class="btn btn-outline-primary btn-sm">
+                                <i class="bi bi-pencil"></i>
+                            </a>
+                            <button type="button" class="btn btn-outline-danger btn-sm"
+                                    onclick="deleteCustomer(<%= obj.getId() %>, '<%= obj.getName() %>')">
+                                <i class="bi bi-trash"></i>
+                            </button>
+                        </div>
+                    </td>
+                </tr>
+                <%
+                    }
+                } else {
+                %>
+                <tr>
+                    <td colspan="7" class="text-center text-muted py-4">
+                        <i class="bi bi-inbox display-4 d-block mb-3"></i>
+                        <h5>No customers found</h5>
+                        <p class="mb-0">Start by adding your first customer using the button above.</p>
+                    </td>
+                </tr>
+                <%
+                    }
+                %>
                 </tbody>
             </table>
         </div>
@@ -130,7 +130,7 @@
             <form action="<%= request.getContextPath() %>/customers" method="post">
                 <div class="modal-body">
                     <input type="hidden" name="action" value="add"/>
-                    
+
                     <div class="row g-3">
                         <div class="col-md-6">
                             <label for="accountNumber" class="form-label">Account Number <span class="text-danger">*</span></label>
@@ -195,22 +195,22 @@
 </div>
 
 <script>
-function deleteCustomer(customerId, customerName) {
-    document.getElementById('customerNameToDelete').textContent = customerName;
-    document.getElementById('customerIdToDelete').value = customerId;
-    new bootstrap.Modal(document.getElementById('deleteCustomerModal')).show();
-}
+    function deleteCustomer(customerId, customerName) {
+        document.getElementById('customerNameToDelete').textContent = customerName;
+        document.getElementById('customerIdToDelete').value = customerId;
+        new bootstrap.Modal(document.getElementById('deleteCustomerModal')).show();
+    }
 
-// Auto-hide alerts after 5 seconds
-document.addEventListener('DOMContentLoaded', function() {
-    setTimeout(function() {
-        const alerts = document.querySelectorAll('.alert');
-        alerts.forEach(function(alert) {
-            const bsAlert = new bootstrap.Alert(alert);
-            bsAlert.close();
-        });
-    }, 5000);
-});
+    // Auto-hide alerts after 5 seconds
+    document.addEventListener('DOMContentLoaded', function() {
+        setTimeout(function() {
+            const alerts = document.querySelectorAll('.alert');
+            alerts.forEach(function(alert) {
+                const bsAlert = new bootstrap.Alert(alert);
+                bsAlert.close();
+            });
+        }, 5000);
+    });
 </script>
 
 <jsp:include page="footer.jsp" />
