@@ -238,22 +238,22 @@
         <div class="card border-0 shadow-sm">
             <div class="card-body">
                 <div class="row g-3">
-                    <div class="col-md-3">
+                    <div class="col-md-6">
                         <button type="button" class="btn btn-primary w-100" onclick="window.print()">
                             <i class="bi bi-printer me-2"></i>Print Bill
                         </button>
                     </div>
-                    <div class="col-md-3">
-                        <button type="button" class="btn btn-success w-100" onclick="markAsPaid()">
-                            <i class="bi bi-check-circle me-2"></i>Mark as Paid
-                        </button>
-                    </div>
-                    <div class="col-md-3">
-                        <button type="button" class="btn btn-info w-100" onclick="sendEmail()">
-                            <i class="bi bi-envelope me-2"></i>Send Email
-                        </button>
-                    </div>
-                    <div class="col-md-3">
+<%--                    <div class="col-md-3">--%>
+<%--                        <button type="button" class="btn btn-success w-100" onclick="markAsPaid()">--%>
+<%--                            <i class="bi bi-check-circle me-2"></i>Mark as Paid--%>
+<%--                        </button>--%>
+<%--                    </div>--%>
+<%--                    <div class="col-md-3">--%>
+<%--                        <button type="button" class="btn btn-info w-100" onclick="sendEmail()">--%>
+<%--                            <i class="bi bi-envelope me-2"></i>Send Email--%>
+<%--                        </button>--%>
+<%--                    </div>--%>
+                    <div class="col-md-6 pt-sm-2">
                         <a href="<%= request.getContextPath() %>/bills?id=<%= bill.getId() %>&action=edit" 
                            class="btn btn-warning w-100">
                             <i class="bi bi-pencil me-2"></i>Edit Bill

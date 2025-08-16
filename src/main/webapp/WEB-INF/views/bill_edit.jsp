@@ -258,12 +258,12 @@
                     <button type="button" class="btn btn-outline-primary btn-sm" onclick="printBill()">
                         <i class="bi bi-printer me-2"></i>Print Bill
                     </button>
-                    <button type="button" class="btn btn-outline-success btn-sm" onclick="markAsPaid()">
-                        <i class="bi bi-check-circle me-2"></i>Mark as Paid
-                    </button>
-                    <button type="button" class="btn btn-outline-info btn-sm" onclick="sendEmail()">
-                        <i class="bi bi-envelope me-2"></i>Send Email
-                    </button>
+<%--                    <button type="button" class="btn btn-outline-success btn-sm" onclick="markAsPaid()">--%>
+<%--                        <i class="bi bi-check-circle me-2"></i>Mark as Paid--%>
+<%--                    </button>--%>
+<%--                    <button type="button" class="btn btn-outline-info btn-sm" onclick="sendEmail()">--%>
+<%--                        <i class="bi bi-envelope me-2"></i>Send Email--%>
+<%--                    </button>--%>
                 </div>
             </div>
         </div>
