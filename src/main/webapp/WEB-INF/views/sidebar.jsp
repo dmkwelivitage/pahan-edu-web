@@ -29,8 +29,8 @@
 <div class="offcanvas offcanvas-start d-md-none" id="mobileSidebar" tabindex="-1">
     <div class="offcanvas-header">
         <h5 class="offcanvas-title">
-            <img src="<%= request.getContextPath() %>/assets/img/logo2.png" alt="Pahan Edu" style="height: 30px; width: auto;">
-            <span class="ms-2 text-primary fw-bold">Pahan Edu</span>
+            <img src="<%= request.getContextPath() %>/assets/img/logo.jpg" alt="Pahan Edu" style="height: 30px; width: auto;">
+<%--            <span class="ms-2 text-primary fw-bold">Pahan Edu</span>--%>
         </h5>
         <button type="button" class="btn-close" data-bs-dismiss="offcanvas"></button>
     </div>
@@ -108,9 +108,9 @@
 <nav id="sidebar" class="col-md-3 col-lg-2 d-none d-md-block bg-white sidebar">
     <!-- Company Logo and Name at Top -->
     <div class="sidebar-header text-center py-3 border-bottom">
-        <img src="<%= request.getContextPath() %>/assets/img/logo2.png" alt="Pahan Edu" class="sidebar-logo mb-2">
-        <h6 class="sidebar-company-name mb-0 text-primary fw-bold">Pahan Edu</h6>
-        <small class="text-muted">Education Management</small>
+        <img src="<%= request.getContextPath() %>/assets/img/logo.jpg" alt="Pahan Edu" class="sidebar-logo mb-2">
+<%--        <h6 class="sidebar-company-name mb-0 text-primary fw-bold">Pahan Edu</h6>--%>
+<%--        <small class="text-muted">Education Management</small>--%>
     </div>
     
     <div class="position-sticky pt-3">
@@ -214,7 +214,7 @@
     }
     
     .sidebar-logo {
-        height: 40px;
+        height: 130px;
         width: auto;
         position: relative;
         z-index: 10;

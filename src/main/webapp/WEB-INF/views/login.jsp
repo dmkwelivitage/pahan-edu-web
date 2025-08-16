@@ -34,7 +34,7 @@
         }
         
         .logo {
-            width: 80px;
+            width: 150px;
             height: auto;
             margin-bottom: 1.5rem;
         }
@@ -130,9 +130,9 @@
 </head>
 <body>
     <div class="login-container">
-        <img src="<%= request.getContextPath() %>/assets/img/logo2.png" alt="Pahan Edu Logo" class="logo"/>
+        <img src="<%= request.getContextPath() %>/assets/img/logo.jpg" alt="Pahan Edu Logo" class="logo"/>
         
-        <h1 class="brand-name">Pahan Edu</h1>
+<%--        <h1 class="brand-name">Pahan Edu</h1>--%>
         <p class="signin-text">Sign in to your account</p>
         
         <form action="<%= request.getContextPath() %>/login" method="post">
