@@ -15,7 +15,7 @@
     
     <style>
         body {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, #062198 0%, #381260 100%);
             min-height: 100vh;
             display: flex;
             align-items: center;
@@ -40,7 +40,7 @@
         }
         
         .brand-name {
-            color: #0d6efd;
+            color: #053783;
             font-size: 1.75rem;
             font-weight: 700;
             margin-bottom: 0.5rem;
@@ -96,8 +96,10 @@
         
         .input-group-text {
             background: transparent;
-            border: 2px solid #e9ecef;
+            border: 1px solid #1e1e1e;
             border-right: none;
+            margin-top: 0.3rem;
+            padding: 1rem;
             color: #6c757d;
         }
         

@@ -47,7 +47,7 @@
                 </h5>
             </div>
             <div class="card-body">
-                <form action="<%= request.getContextPath() %>/bills" method="post">
+                <form action="<%= request.getContextPath() %>/bills" method="post" class="edit-form">
                     <input type="hidden" name="action" value="update"/>
                     <input type="hidden" name="id" value="<%= bill.getId() %>"/>
                     <input type="hidden" name="totalAmount" id="totalAmountInput" value="0"/>
@@ -128,7 +128,7 @@
                                         <label class="form-label">Unit Price</label>
                                         <div class="input-group">
                                             <span class="input-group-text">$</span>
-                                            <input type="number" class="form-control price-input" name="unitPrices[]"
+                                            <input type="number" class="form-control price-input text-dark" name="unitPrices[]"
                                                    placeholder="Price" step="0.01" min="0"
                                                    value="<%= String.format("%.2f", unitPrice) %>" required>
                                         </div>
@@ -522,6 +522,11 @@ function sendEmail() {
 </script>
 
 <style>
+    .edit-form{
+        max-width: 100%;
+    }
+
+
 .form-control:focus, .form-select:focus {
     border-color: #ffc107;
     box-shadow: 0 0 0 0.2rem rgba(255, 193, 7, 0.25);

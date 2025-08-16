@@ -211,7 +211,7 @@
                                                 if (itemList != null) {
                                                     for (ItemDTO item : itemList) {
                                             %>
-                                            <option value="<%= item.getId() %>"><%= item.getName() %></option>
+                                            <option value="<%= item.getId() %>" data-price="<%= item.getUnitPrice() %>"><%= item.getName() %></option>
                                             <%
                                                     }
                                                 }
@@ -224,7 +224,7 @@
                                     </div>
                                     <div class="col-md-3">
                                         <input type="number" class="form-control" name="unitPrices[]" 
-                                               placeholder="Price" step="0.01" min="0" required>
+                                               placeholder="Price" step="0.01" min="0" readonly required>
                                     </div>
                                     <div class="col-md-2">
                                         <span class="form-control-plaintext item-total text-dark">$0.00</span>
@@ -302,21 +302,52 @@ function deleteBill(billId, customerName) {
 }
 
 document.addEventListener('DOMContentLoaded', function() {
-    var addItemBtn = document.getElementById('addItemBtn');
     var billItems = document.getElementById('billItems');
-    
+
+    // Event delegation for item select changes
+    billItems.addEventListener("change", function (e) {
+        if (e.target && e.target.classList.contains("form-select")) {
+            const price = e.target.options[e.target.selectedIndex].getAttribute("data-price");
+            const row = e.target.closest(".row");
+            if (row && price) {
+                row.querySelector("input[name='unitPrices[]']").value = price;
+                row.querySelector(".item-total").textContent =
+                    "$" + (parseFloat(price) * parseInt(row.querySelector("input[name='quantities[]']").value)).toFixed(2);
+            }
+            updateTotal();
+        }
+    });
+
+    // Event delegation for quantity changes
+    billItems.addEventListener("input", function (e) {
+        if (e.target && e.target.name === "quantities[]") {
+            const row = e.target.closest(".row");
+            const price = parseFloat(row.querySelector("input[name='unitPrices[]']").value) || 0;
+            row.querySelector(".item-total").textContent =
+                "$" + (price * parseInt(e.target.value || 0)).toFixed(2);
+        }
+        updateTotal();
+    });
+
+    var addItemBtn = document.getElementById('addItemBtn');
+
     if (addItemBtn) {
         addItemBtn.addEventListener('click', function() {
             var newItem = document.querySelector('.bill-item').cloneNode(true);
+
+            // reset values
             var inputs = newItem.querySelectorAll('input, select');
-            for (var i = 0; i < inputs.length; i++) {
-                inputs[i].value = '';
-                if (inputs[i].type === 'number' && inputs[i].name === 'quantities[]') {
-                    inputs[i].value = '1';
+            inputs.forEach(input => {
+                input.value = '';
+                if (input.type === 'number' && input.name === 'quantities[]') {
+                    input.value = '1';
                 }
-            }
+            });
+
+            // reset total
+            newItem.querySelector(".item-total").textContent = "$0.00";
+
             billItems.appendChild(newItem);
-            updateTotal();
         });
     }
     
