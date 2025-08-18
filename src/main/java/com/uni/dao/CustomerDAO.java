@@ -109,6 +109,28 @@ public class CustomerDAO {
         return customer;
     }
 
+    // Get customer by account number
+    public Customer getCustomerByAccountNumber(String accountNumber) {
+        String sql = "SELECT * FROM customers WHERE account_number=?";
+        Customer customer = null;
+
+        try (Connection conn = DBConnection.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+            stmt.setString(1, accountNumber);
+            ResultSet rs = stmt.executeQuery();
+
+            if (rs.next()) {
+                customer = mapResultSetToCustomer(rs);
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return customer;
+    }
+
     private Customer mapResultSetToCustomer(ResultSet rs) throws SQLException {
         Customer customer = new Customer();
         customer.setId(rs.getInt("id"));
