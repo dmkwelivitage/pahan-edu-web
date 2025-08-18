@@ -4,7 +4,60 @@ This project follows [Semantic Versioning](https://semver.org/).
 
 ---
 
-## [1.0.0] - 2025-07-31 - Pending Release
+## [2.4.2] - 2025-08-17
+### 🐞 Bug Fixes & Minor Changes
+- Fixed **Bill Edit** item display issues.
+- Corrected **color theme inconsistencies** and **invisible text**.
+- Adjusted **Bill Summary** and **Printing** alignment.
+- Improved **mobile navigation menu** responsiveness.
+- Removed unused **Future Bill Email and Due Update** functionality.
+
+---
+
+## [2.4.0] - 2025-08-14
+🎉 **Feature Expansion Release**
+
+### ✨ New Features
+- **Dashboard Page**
+  - Centralized hub for navigation and quick access to key modules.
+
+- **Bill Summary**
+  - Detailed view of bills including items, totals, and customer data.
+
+- **Bill Printing**
+  - Clean, formatted printable bills.
+  - Direct print option available from Bill Summary view.
+
+- **Customer Lookup**
+  - Quick access to customer details inside billing workflows.
+  - Integrated into bill creation/edit forms for fast selection.
+
+### 🧪 Testing
+- Manual regression testing across billing flow.
+- Verified new features and UI responsiveness.
+
+---
+
+## [2.0.0] - 2025-08-10
+🎨 **Complete UI Revamp**
+
+### 🚀 Overview
+This release represents a **major UI overhaul** transitioning the system from the dark theme of v1.0.0 to a **modern white theme** with consistent navigation and branding.
+
+### 🔧 Changes
+- Rebuilt **Header, Footer, and Navigation** components.
+- Introduced **White Theme** across all pages.
+- Updated **logo and branding**.
+- Improved **mobile navigation menu** and responsive layouts.
+- Applied consistent **visual polish and layout refinements**.
+
+### 🧪 Testing
+- Regression tested authentication, customer, item, and billing flows.
+- Verified UI consistency across browsers and devices.
+
+---
+
+## [1.0.0] - 2025-07-31
 🎉 **Initial Production Release**
 
 ### 🚀 Overview
