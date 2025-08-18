@@ -1,10 +1,150 @@
 /* ====== GLOBAL STYLES ====== */
 body {
     font-family: 'Segoe UI', sans-serif;
-    background-color: #121212;
+    background-color: #ffffff;
     color: #f5f5f5;
     margin: 0;
     padding: 20px;
+}
+
+/* ====== MODERN TABLE STYLES ====== */
+.modern-table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+    margin: 20px 0;
+    background: #ffffff;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+}
+
+.modern-table thead {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+}
+
+.modern-table th {
+    padding: 16px 20px;
+    text-align: left;
+    font-weight: 600;
+    color: #ffffff;
+    font-size: 0.875rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    border: none;
+    position: relative;
+}
+
+.modern-table th:first-child {
+    border-top-left-radius: 12px;
+}
+
+.modern-table th:last-child {
+    border-top-right-radius: 12px;
+}
+
+.modern-table tbody tr {
+    transition: all 0.2s ease-in-out;
+    border-bottom: 1px solid #f1f5f9;
+}
+
+.modern-table tbody tr:last-child {
+    border-bottom: none;
+}
+
+.modern-table tbody tr:hover {
+    background-color: #f8fafc;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.modern-table td {
+    padding: 16px 20px;
+    color: #334155;
+    border: none;
+    vertical-align: middle;
+}
+
+.modern-table tbody tr:nth-child(even) {
+    background-color: #fafbfc;
+}
+
+.modern-table .action-buttons {
+    display: flex;
+    gap: 8px;
+    justify-content: center;
+}
+
+.modern-table .btn-sm {
+    padding: 6px 12px;
+    font-size: 0.75rem;
+    border-radius: 6px;
+    transition: all 0.2s ease;
+}
+
+.modern-table .btn-sm:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+}
+
+/* Badge styling for table cells */
+.modern-table .badge {
+    font-size: 0.75rem;
+    padding: 6px 10px;
+    border-radius: 20px;
+    font-weight: 500;
+}
+
+/* Status indicators */
+.modern-table .status-active {
+    background: linear-gradient(135deg, #10b981, #059669);
+    color: white;
+}
+
+.modern-table .status-pending {
+    background: linear-gradient(135deg, #f59e0b, #d97706);
+    color: white;
+}
+
+.modern-table .status-inactive {
+    background: linear-gradient(135deg, #ef4444, #dc2626);
+    color: white;
+}
+
+/* Card wrapper for tables */
+.table-card {
+    background: #ffffff;
+    border-radius: 12px;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+    overflow: hidden;
+    margin: 20px 0;
+}
+
+.table-card .card-header {
+    background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+    padding: 20px;
+    border-bottom: 1px solid #e2e8f0;
+}
+
+.table-card .card-body {
+    padding: 0;
+}
+
+/* Responsive table */
+@media (max-width: 768px) {
+    .modern-table {
+        font-size: 0.875rem;
+    }
+    
+    .modern-table th,
+    .modern-table td {
+        padding: 12px 16px;
+    }
+    
+    .modern-table .action-buttons {
+        flex-direction: column;
+        gap: 4px;
+    }
 }
 
 /* ====== LOGIN STYLES ====== */
@@ -27,6 +167,7 @@ body {
 }
 
 .input-group {
+    color: #f5f5f5;
     position: relative;
     margin-bottom: 20px;
 }
@@ -44,7 +185,7 @@ body {
     padding: 12px 15px 12px 40px;
     border: 1px solid #555;
     border-radius: 8px;
-    background-color: #2c2c2c;
+    background-color: #f1f0f0;
     color: #f5f5f5;
 }
 
@@ -89,7 +230,7 @@ button:hover, .logout-button:hover {
 
 /* ====== DASHBOARD STYLES ====== */
 .dashboard-container {
-    background-color: #1e1e1e;
+    background-color: #efe9e9;
     padding: 40px;
     border-radius: 12px;
     box-shadow: 0 0 20px rgba(255, 255, 255, 0.05);
@@ -123,7 +264,7 @@ thead {
 
 /* ====== FORM STYLES ====== */
 form {
-    background-color: #1f1f1f;
+    background-color: #f3eded;
     padding: 30px;
     border-radius: 10px;
     max-width: 500px;
@@ -133,7 +274,7 @@ form {
 label {
     display: block;
     margin-top: 12px;
-    color: #f5f5f5;
+    color: #2c2c2c;
 }
 
 input, select, textarea {
@@ -159,7 +300,7 @@ a {
 }
 
 a:hover {
-    text-decoration: underline;
+    text-decoration: none;
 }
 
 .error-message, .error {
@@ -213,7 +354,7 @@ a:hover {
 /* ====== ITEM MODULE STYLES ====== */
 
 .item-container {
-    background-color: #1e1e1e;
+    background-color: #efe3e3;
     padding: 30px;
     border-radius: 12px;
     box-shadow: 0 0 15px rgba(255, 255, 255, 0.05);
@@ -242,7 +383,7 @@ a:hover {
 }
 
 .item-table thead {
-    background-color: #2a2a2a;
+    background-color: #dccece;
 }
 
 .item-form {

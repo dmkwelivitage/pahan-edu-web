@@ -1,213 +1,553 @@
-<%@ page contentType="text/html;charset=UTF-8" %>
+<%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ page import="com.uni.dto.BillDTO" %>
-<%@ page import="com.uni.dto.BillItemDTO" %>
+<%@ page import="com.uni.dto.CustomerDTO" %>
 <%@ page import="com.uni.dto.ItemDTO" %>
 <%@ page import="java.util.List" %>
-<html>
-<head>
-  <title>Edit Bill - Pahan Edu</title>
-  <link rel="stylesheet" href="<%= request.getContextPath() %>/assets/css/style.css" />
-  <script>
-    <%
-      // This script block is used to generate the item options dynamically
-      List<ItemDTO> items = (List<ItemDTO>) request.getAttribute("items");
-      %>
-    const itemOptionsHTML = `
-    <% for (ItemDTO i : items) { %>
-      <option value="<%= i.getId() %>"><%= i.getName() %></option>
-    <% } %>
-  `.trim();
+<%@ page import="com.uni.dto.BillItemDTO" %>
 
-    function calculateTotal() {
-      const table = document.getElementById("itemsTable");
-      const rows = table.querySelectorAll("tr:not(:first-child)");
-      let grandTotal = 0;
+<jsp:include page="header.jsp">
+    <jsp:param name="pageTitle" value="Edit Bill" />
+</jsp:include>
 
-      rows.forEach(row => {
-        const qtyInput = row.querySelector("input[name='quantities[]']");
-        const priceInput = row.querySelector("input[name='unitPrices[]']");
-        const lineTotalInput = row.querySelector("input[name='lineTotals[]']");
+<div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+    <h1 class="h2">Edit Bill</h1>
+    <div class="btn-toolbar mb-2 mb-md-0">
+        <a href="<%= request.getContextPath() %>/bills" class="btn btn-outline-secondary me-2">
+            <i class="bi bi-arrow-left me-2"></i>Back to Bills
+        </a>
+    </div>
+</div>
 
-        const quantity = parseFloat(qtyInput.value) || 0;
-        const unitPrice = parseFloat(priceInput.value) || 0;
-        const lineTotal = quantity * unitPrice;
+<%
+  BillDTO bill = (BillDTO) request.getAttribute("bill");
+  if (bill != null) {
+%>
 
-        lineTotalInput.value = lineTotal.toFixed(2);
-        grandTotal += lineTotal;
-      });
-
-      document.getElementById("totalAmount").innerText = grandTotal.toFixed(2);
-      document.getElementById("totalPrice").value = grandTotal.toFixed(2);
-    }
-
-    function addRow() {
-      const table = document.getElementById("itemsTable");
-      const row = table.insertRow();
-
-      // 1. Create item <select>
-      const select = document.createElement("select");
-      select.name = "itemIds[]";
-      select.onchange = calculateTotal;
-
-      // Copy options from hidden template
-      const template = document.getElementById("itemOptions");
-      select.innerHTML = template.innerHTML;
-
-      // 2. Create quantity <input>
-      const quantity = document.createElement("input");
-      quantity.type = "number";
-      quantity.name = "quantities[]";
-      quantity.min = 1;
-      quantity.value = 1;
-      quantity.required = true;
-      quantity.oninput = calculateTotal;
-      quantity.onchange = calculateTotal;
-
-      // 3. Create unit price <input>
-      const unitPrice = document.createElement("input");
-      unitPrice.type = "number";
-      unitPrice.name = "unitPrices[]";
-      unitPrice.step = "0.01";
-      unitPrice.value = "0.00";
-      unitPrice.required = true;
-      unitPrice.oninput = calculateTotal;
-      unitPrice.onchange = calculateTotal;
-
-      // 4. Create line total <input> (readonly)
-      const lineTotal = document.createElement("input");
-      lineTotal.type = "number";
-      lineTotal.name = "lineTotals[]";
-      lineTotal.step = "0.01";
-      lineTotal.value = "0.00";
-      lineTotal.readOnly = true;
-
-      // 5. Create remove button
-      const removeBtn = document.createElement("button");
-      removeBtn.type = "button";
-      removeBtn.innerText = "Remove";
-      removeBtn.onclick = function () {
-        table.deleteRow(row.rowIndex);
-        calculateTotal();
-      };
-
-      // 6. Append all to row
-      row.insertCell().appendChild(select);
-      row.insertCell().appendChild(quantity);
-      row.insertCell().appendChild(unitPrice);
-      row.insertCell().appendChild(lineTotal);
-      row.insertCell().appendChild(removeBtn);
-
-      calculateTotal();
-    }
-
-    function removeRow(button) {
-      const row = button.parentNode.parentNode;
-      row.parentNode.removeChild(row);
-      calculateTotal(); // recalculate after removing
-    }
-
-    window.onload = function () {
-      calculateTotal(); // recalculate on page load
-    };
-  </script>
-</head>
-<body>
+<!-- Error Alert -->
 <%
   String error = (String) request.getAttribute("error");
   if (error != null && !error.isEmpty()) {
 %>
-<div class="error"><%= error %></div>
+<div class="alert alert-danger alert-dismissible fade show" role="alert">
+    <i class="bi bi-exclamation-triangle me-2"></i>
+    <%= error %>
+    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+</div>
 <%
   }
-
-  BillDTO bill = (BillDTO) request.getAttribute("bill");
-  List<ItemDTO> billItems = (List<ItemDTO>) request.getAttribute("billItems");
-
-  if (bill == null || billItems == null) {
-%>
-<div class="error">No bill data found.</div>
-<%
-} else {
 %>
 
-<h1>Edit Bill</h1>
+<div class="row">
+    <div class="col-lg-8">
+        <div class="card border-0 shadow-sm">
+            <div class="card-header bg-transparent border-0">
+                <h5 class="mb-0">
+                    <i class="bi bi-pencil-square me-2 text-warning"></i>
+                    Edit Bill Information
+                </h5>
+            </div>
+            <div class="card-body">
+                <form action="<%= request.getContextPath() %>/bills" method="post" class="edit-form">
+                    <input type="hidden" name="action" value="update"/>
+                    <input type="hidden" name="id" value="<%= bill.getId() %>"/>
+                    <input type="hidden" name="totalAmount" id="totalAmountInput" value="0"/>
 
-<form action="<%= request.getContextPath() %>/bills" method="post" onchange="calculateTotal()">
-  <input type="hidden" name="action" value="update" />
-  <input type="hidden" name="id" value="<%= bill.getId() %>" />
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <label for="customerId" class="form-label">Customer <span class="text-danger">*</span></label>
+                            <select class="form-select" id="customerId" name="customerId" required>
+                                <option value="">Select a customer</option>
+                                <%
+                                    List<CustomerDTO> customers = (List<CustomerDTO>) request.getAttribute("customers");
+                                    if (customers != null) {
+                                        for (CustomerDTO customer : customers) {
+                                            String selected = (customer.getId() == bill.getCustomerId()) ? "selected" : "";
+                                %>
+                                <option value="<%= customer.getId() %>" <%= selected %>>
+                                    <%= customer.getName() %> (<%= customer.getAccountNumber() %>)
+                                </option>
+                                <%
+                                        }
+                                    }
+                                %>
+                            </select>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="billingDate" class="form-label">Bill Date <span class="text-danger">*</span></label>
+                            <input type="date" class="form-control" id="billingDate" name="billingDate"
+                                   value="<%= bill.getBillingDate() != null ? bill.getBillingDate() : java.time.LocalDate.now() %>" required>
+                        </div>
 
-  <label>Customer ID:
-    <input type="number" name="customerId" value="<%= bill.getCustomerId() %>" required />
-  </label><br />
+                        <div class="col-12">
+                            <hr>
+                            <h6 class="mb-3">Bill Items</h6>
+                            <div id="billItems">
+                                <%
+                                    List<BillItemDTO> billItemList = bill.getItems();
+                                    List<ItemDTO> allItems = (List<ItemDTO>) request.getAttribute("items");
+                                    if (billItemList != null && !billItemList.isEmpty()) {
+                                        for (BillItemDTO billItem : billItemList) {
+                                            ItemDTO matchedItem = null;
+                                            if (allItems != null) {
+                                                for (ItemDTO i : allItems) {
+                                                    if (i.getId() == billItem.getItemId()) {
+                                                        matchedItem = i;
+                                                        break;
+                                                    }
+                                                }
+                                            }
+                                            // Use the actual unit price from the bill item, fallback to matched item price
+                                            double unitPrice = billItem.getUnitPrice() > 0 ? billItem.getUnitPrice() : 
+                                                             (matchedItem != null ? matchedItem.getUnitPrice() : 0);
+                                %>
+                                <div class="row g-2 mb-2 bill-item" data-item-id="<%= billItem.getItemId() %>">
+                                    <div class="col-md-4">
+                                        <label class="form-label">Item</label>
+                                        <select class="form-select item-select" name="itemIds[]" required>
+                                            <option value="">Select item</option>
+                                            <%
+                                                if (allItems != null) {
+                                                    for (ItemDTO option : allItems) {
+                                                        String selected = (option.getId() == billItem.getItemId()) ? "selected" : "";
+                                            %>
+                                            <option value="<%= option.getId() %>" data-price="<%= option.getUnitPrice() %>" <%= selected %>>
+                                                <%= option.getName() %> - $<%= String.format("%.2f", option.getUnitPrice()) %>
+                                            </option>
+                                            <%
+                                                    }
+                                                }
+                                            %>
+                                        </select>
+                                    </div>
+                                    <div class="col-md-2">
+                                        <label class="form-label">Quantity</label>
+                                        <input type="number" class="form-control quantity-input" name="quantities[]"
+                                               placeholder="Qty" min="1" value="<%= billItem.getQuantity() %>" required>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <label class="form-label">Unit Price</label>
+                                        <div class="input-group">
+                                            <span class="input-group-text">$</span>
+                                            <input type="number" class="form-control price-input text-dark" name="unitPrices[]"
+                                                   placeholder="Price" step="0.01" min="0"
+                                                   value="<%= String.format("%.2f", unitPrice) %>" required>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-2">
+                                        <label class="form-label">Line Total</label>
+                                        <span class="form-control-plaintext item-total">
+                                            $<%= String.format("%.2f", billItem.getQuantity() * unitPrice) %>
+                                        </span>
+                                    </div>
+                                    <div class="col-md-1">
+                                        <label class="form-label">&nbsp;</label>
+                                        <button type="button" class="btn btn-outline-danger btn-sm remove-item d-block">
+                                            <i class="bi bi-trash"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                                <%
+                                    }
+                                } else {
+                                %>
+                                <div class="text-center text-muted py-4">
+                                    <i class="bi bi-inbox display-4 d-block mb-3"></i>
+                                    <h6>No bill items found.</h6>
+                                </div>
+                                <%
+                                    }
+                                %>
+                            </div>
+                            <button type="button" class="btn btn-outline-primary btn-sm" id="addItemBtn">
+                                <i class="bi bi-plus-circle me-2"></i>Add Item
+                            </button>
+                        </div>
 
-  <label>Billing Date:
-    <input type="date" name="billingDate" value="<%= new java.text.SimpleDateFormat("yyyy-MM-dd").format(bill.getBillingDate()) %>" required />
-  </label><br />
+                        <div class="col-12">
+                            <hr>
+                            <div class="row">
+                                <div class="col-md-6 offset-md-6">
+                                    <div class="d-flex justify-content-between mb-2">
+                                        <span>Subtotal:</span>
+                                        <span id="subtotal">$0.00</span>
+                                    </div>
+                                    <div class="d-flex justify-content-between mb-2">
+                                        <span>Tax (10%):</span>
+                                        <span id="tax">$0.00</span>
+                                    </div>
+                                    <hr>
+                                    <div class="d-flex justify-content-between">
+                                        <strong>Total Amount:</strong>
+                                        <strong class="text-primary fs-5" id="totalAmount">$0.00</strong>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
 
-  <label>Status:
-    <input type="text" name="status" value="<%= bill.getStatus() %>" required />
-  </label><br />
+                    <div class="d-flex justify-content-end gap-2 mt-4">
+                        <a href="<%= request.getContextPath() %>/bills" class="btn btn-secondary">
+                            <i class="bi bi-x-circle me-2"></i>Cancel
+                        </a>
+                        <button type="submit" class="btn btn-warning">
+                            <i class="bi bi-check-circle me-2"></i>Update Bill
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
 
-  <h3>Items</h3>
-  <table border="1" id="itemsTable">
-    <tr>
-      <th>Item</th>
-      <th>Quantity</th>
-      <th>Unit Price</th>
-      <th>Line Total</th>
-      <th>Action</th>
-    </tr>
+    <div class="col-lg-4">
+        <!-- Bill Summary -->
+        <div class="card border-0 shadow-sm mb-4">
+            <div class="card-header bg-transparent border-0">
+                <h6 class="mb-0">
+                    <i class="bi bi-info-circle me-2 text-info"></i>
+                    Bill Summary
+                </h6>
+            </div>
+            <div class="card-body">
+                <div class="mb-3">
+                    <small class="text-muted">Bill ID</small>
+                    <div class="fw-bold">#<%= bill.getId() %></div>
+                </div>
+                <div class="mb-3">
+                    <small class="text-muted">Customer</small>
+                    <div id="selectedCustomer">
+                        <%
+                            if (customers != null && !customers.isEmpty()) {
+                            for (CustomerDTO customer : customers){
+                            if (bill.getCustomerId() == customer.getId()) { %>
+                            <%= customer.getName() %>
+                        <% } else %>
+                        <%
+                        }
+                        }
+                        %>
+                    </div>
+                </div>
+                <div class="mb-3">
+                    <small class="text-muted">Bill Date</small>
+                    <div id="selectedDate">
+                        <%= bill.getBillingDate() != null ? bill.getBillingDate() : "Not set" %>
+                    </div>
+                </div>
+                <div class="mb-3">
+                    <small class="text-muted">Items</small>
+                    <div id="itemCount">0 items</div>
+                </div>
+                <hr>
+                <div class="d-flex justify-content-between">
+                    <strong>Total:</strong>
+                    <strong id="summaryTotal">$<%= String.format("%.2f", bill.getTotalAmount()) %></strong>
+                </div>
+            </div>
+        </div>
 
-    <%
-      for (BillItemDTO item : bill.getItems()) {
-    %>
-    <tr>
-      <td>
-        <select name="itemIds[]">
-          <%
-            for (ItemDTO i : items) {
-              String selected = (i.getId() == item.getItemId()) ? "selected" : "";
-          %>
-          <option value="<%= i.getId() %>" <%= selected %>><%= i.getName() %></option>
-          <%
-            }
-          %>
-        </select>
-      </td>
-      <td><input type="number" name="quantities[]" value="<%= item.getQuantity() %>" min="1" required /></td>
-      <td><input type="number" name="unitPrices[]" value="<%= item.getUnitPrice() %>" step="0.01" required /></td>
-      <td><input type="number" name="lineTotals[]" value="<%= item.getLineTotal() %>" step="0.01" readonly /></td>
-      <td><button type="button" onclick="removeRow(this)">Remove</button></td>
-    </tr>
-    <%
-      }
-    %>
-  </table>
-
-  <br><br>
-  <strong>Total: Rs. <span id="totalAmount"><%= bill.getTotalAmount()%></span></strong>
-  <br><br>
-  <input type="hidden" name="totalAmount" id="totalPrice" value="<%= bill.getTotalAmount() %>" />
-
-  <button type="button" onclick="addRow()">Add Item</button><br /><br />
-  <button type="submit">Update Bill</button>
-</form>
-
-<div id="itemOptions" style="display:none">
-  <%
-    for (ItemDTO i : items) {
-  %>
-  <option value="<%= i.getId() %>"><%= i.getName() %></option>
-  <%
-    }
-  %>
+        <!-- Actions -->
+        <div class="card border-0 shadow-sm">
+            <div class="card-header bg-transparent border-0">
+                <h6 class="mb-0">
+                    <i class="bi bi-gear me-2 text-secondary"></i>
+                    Actions
+                </h6>
+            </div>
+            <div class="card-body">
+                <div class="d-grid gap-2">
+                    <button type="button" class="btn btn-outline-primary btn-sm" onclick="printBill()">
+                        <i class="bi bi-printer me-2"></i>Print Bill
+                    </button>
+<%--                    <button type="button" class="btn btn-outline-success btn-sm" onclick="markAsPaid()">--%>
+<%--                        <i class="bi bi-check-circle me-2"></i>Mark as Paid--%>
+<%--                    </button>--%>
+<%--                    <button type="button" class="btn btn-outline-info btn-sm" onclick="sendEmail()">--%>
+<%--                        <i class="bi bi-envelope me-2"></i>Send Email--%>
+<%--                    </button>--%>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
 
-<%
-  }
-%>
+<% } else { %>
 
-<br />
-<a href="<%= request.getContextPath() %>/bills">← Back to Bill List</a>
-</body>
-</html>
+<div class="alert alert-warning" role="alert">
+    <i class="bi bi-exclamation-triangle me-2"></i>
+    <strong>Bill not found!</strong> The bill you're looking for doesn't exist or has been removed.
+</div>
+
+<div class="text-center mt-4">
+    <a href="<%= request.getContextPath() %>/bills" class="btn btn-primary">
+        <i class="bi bi-arrow-left me-2"></i>Back to Bill List
+    </a>
+</div>
+
+<% } %>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    var addItemBtn = document.getElementById('addItemBtn');
+    var billItems = document.getElementById('billItems');
+    var customerSelect = document.getElementById('customerId');
+    var dateInput = document.getElementById('billingDate');
+
+    // Initialize event listeners for existing bill items
+    initializeExistingItems();
+
+    // Add new item row
+    if (addItemBtn) {
+        addItemBtn.addEventListener('click', function() {
+            var newItem = createItemRow();
+            billItems.appendChild(newItem);
+            updateTotals();
+        });
+    }
+
+    // Update customer selection display
+    if (customerSelect) {
+        customerSelect.addEventListener('change', function() {
+            var selectedOption = this.options[this.selectedIndex];
+            document.getElementById('selectedCustomer').textContent =
+                selectedOption.value ? selectedOption.text : 'Unknown';
+        });
+    }
+
+    // Update date display
+    if (dateInput) {
+        dateInput.addEventListener('change', function() {
+            document.getElementById('selectedDate').textContent = this.value;
+        });
+    }
+
+    function initializeExistingItems() {
+        var existingItems = document.querySelectorAll('.bill-item');
+        existingItems.forEach(function(item) {
+            var itemSelect = item.querySelector('.item-select');
+            var qtyInput = item.querySelector('.quantity-input');
+            var priceInput = item.querySelector('.price-input');
+
+            // Item selection change
+            if (itemSelect) {
+                itemSelect.addEventListener('change', function() {
+                    var selectedOption = this.options[this.selectedIndex];
+                    if (selectedOption.dataset.price) {
+                        priceInput.value = selectedOption.dataset.price;
+                        updateItemTotal(item);
+                        updateTotals();
+                    }
+                });
+            }
+
+            // Quantity change
+            if (qtyInput) {
+                qtyInput.addEventListener('input', function() {
+                    updateItemTotal(item);
+                    updateTotals();
+                });
+            }
+
+            // Price change
+            if (priceInput) {
+                priceInput.addEventListener('input', function() {
+                    updateItemTotal(item);
+                    updateTotals();
+                });
+            }
+        });
+    }
+
+    function createItemRow() {
+        var itemRow = document.createElement('div');
+        itemRow.className = 'row g-2 mb-2 bill-item';
+        itemRow.innerHTML = `
+            <div class="col-md-4">
+                <label class="form-label">Item</label>
+                <select class="form-select item-select" name="itemIds[]" required>
+                    <option value="">Select item</option>
+                    <%
+                        List<ItemDTO> items = (List<ItemDTO>) request.getAttribute("items");
+                        if (items != null) {
+                            for (ItemDTO item : items) {
+                    %>
+                    <option value="<%= item.getId() %>" data-price="<%= item.getUnitPrice() %>">
+                        <%= item.getName() %> - $<%= String.format("%.2f", item.getUnitPrice()) %>
+                    </option>
+                    <%
+                            }
+                        }
+                    %>
+                </select>
+            </div>
+            <div class="col-md-2">
+                <label class="form-label">Quantity</label>
+                <input type="number" class="form-control quantity-input" name="quantities[]"
+                       placeholder="Qty" min="1" value="1" required>
+            </div>
+            <div class="col-md-3">
+                <label class="form-label">Unit Price</label>
+                <div class="input-group">
+                    <span class="input-group-text">$</span>
+                    <input type="number" class="form-control price-input" name="unitPrices[]"
+                           placeholder="Price" step="0.01" min="0" required>
+                </div>
+            </div>
+            <div class="col-md-2">
+                <label class="form-label">Line Total</label>
+                <span class="form-control-plaintext item-total">$0.00</span>
+            </div>
+            <div class="col-md-1">
+                <label class="form-label">&nbsp;</label>
+                <button type="button" class="btn btn-outline-danger btn-sm remove-item d-block">
+                    <i class="bi bi-trash"></i>
+                </button>
+            </div>
+        `;
+
+        // Add event listeners to new row
+        var removeBtn = itemRow.querySelector('.remove-item');
+        removeBtn.addEventListener('click', function() {
+            if (document.querySelectorAll('.bill-item').length > 1) {
+                itemRow.remove();
+                updateTotals();
+            }
+        });
+
+        var itemSelect = itemRow.querySelector('.item-select');
+        var qtyInput = itemRow.querySelector('.quantity-input');
+        var priceInput = itemRow.querySelector('.price-input');
+
+        itemSelect.addEventListener('change', function() {
+            var selectedOption = this.options[this.selectedIndex];
+            if (selectedOption.dataset.price) {
+                priceInput.value = selectedOption.dataset.price;
+                updateItemTotal(itemRow);
+                updateTotals();
+            }
+        });
+
+        qtyInput.addEventListener('input', function() {
+            updateItemTotal(itemRow);
+            updateTotals();
+        });
+
+        priceInput.addEventListener('input', function() {
+            updateItemTotal(itemRow);
+            updateTotals();
+        });
+
+        return itemRow;
+    }
+
+    // Remove item functionality
+    billItems.addEventListener('click', function(e) {
+        if (e.target.classList.contains('remove-item') || e.target.closest('.remove-item')) {
+            if (document.querySelectorAll('.bill-item').length > 1) {
+                e.target.closest('.bill-item').remove();
+                updateTotals();
+            }
+        }
+    });
+
+    function updateItemTotal(itemElement) {
+        var qty = parseFloat(itemElement.querySelector('.quantity-input').value) || 0;
+        var price = parseFloat(itemElement.querySelector('.price-input').value) || 0;
+        var itemTotal = qty * price;
+        itemElement.querySelector('.item-total').textContent = '$' + itemTotal.toFixed(2);
+    }
+
+    function updateTotals() {
+        var total = 0;
+        var itemCount = 0;
+        var items = document.querySelectorAll('.bill-item');
+
+        for (var i = 0; i < items.length; i++) {
+            var item = items[i];
+            var qty = parseFloat(item.querySelector('.quantity-input').value) || 0;
+            var price = parseFloat(item.querySelector('.price-input').value) || 0;
+            var itemTotal = qty * price;
+
+            if (qty > 0 && price > 0) {
+                itemCount++;
+            }
+
+            total += itemTotal;
+        }
+
+        var subtotal = total;
+        var tax = total * 0.1;
+        var grandTotal = total + tax;
+
+        document.getElementById('subtotal').textContent = '$' + subtotal.toFixed(2);
+        document.getElementById('tax').textContent = '$' + tax.toFixed(2);
+        document.getElementById('totalAmount').textContent = '$' + grandTotal.toFixed(2);
+        document.getElementById('summaryTotal').textContent = '$' + grandTotal.toFixed(2);
+        document.getElementById('itemCount').textContent = itemCount + ' items';
+        
+        // Update hidden input for form submission
+        document.getElementById('totalAmountInput').value = grandTotal.toFixed(2);
+    }
+
+    // Initial calculation
+    updateTotals();
+
+    // Auto-hide alerts
+    setTimeout(function() {
+        var alerts = document.querySelectorAll('.alert');
+        for (var i = 0; i < alerts.length; i++) {
+            var bsAlert = new bootstrap.Alert(alerts[i]);
+            bsAlert.close();
+        }
+    }, 5000);
+});
+
+// Action functions
+function printBill() {
+    window.print();
+}
+
+function markAsPaid() {
+    if (confirm('Mark this bill as paid?')) {
+        // Add logic to mark bill as paid
+        alert('Bill marked as paid!');
+    }
+}
+
+function sendEmail() {
+    if (confirm('Send bill via email?')) {
+        // Add logic to send email
+        alert('Email sent!');
+    }
+}
+</script>
+
+<style>
+    .edit-form{
+        max-width: 100%;
+    }
+
+
+.form-control:focus, .form-select:focus {
+    border-color: #ffc107;
+    box-shadow: 0 0 0 0.2rem rgba(255, 193, 7, 0.25);
+}
+
+.card {
+    border-radius: 0.75rem;
+}
+
+.bill-item {
+    background-color: #f8f9fa;
+    padding: 1rem;
+    border-radius: 0.5rem;
+    border: 1px solid #e9ecef;
+}
+
+@media print {
+    .btn, .btn-toolbar, .card-header {
+        display: none !important;
+    }
+}
+</style>
+
+<jsp:include page="footer.jsp" />

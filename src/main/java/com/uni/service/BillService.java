@@ -25,6 +25,8 @@ public class BillService {
         // This must be set by the DAO (e.g., auto-incremented ID)
         for (BillItem item : bill.getBillItems()) {
             item.setBillId(billSaved);
+            // Calculate line total
+            item.setLineTotal(item.getQuantity() * item.getUnitPrice());
             billItemDAO.save(item);
         }
 
@@ -69,6 +71,8 @@ public class BillService {
 
         for (BillItem item : bill.getBillItems()) {
             item.setBillId(id);
+            // Calculate line total
+            item.setLineTotal(item.getQuantity() * item.getUnitPrice());
             billItemDAO.save(item);
         }
 
@@ -90,13 +94,19 @@ public class BillService {
     private Bill mapDtoToEntity(BillDTO dto) {
         List<BillItem> items = new ArrayList<>();
         for (BillItemDTO itemDTO : dto.getItems()) {
+            // Calculate line total if not already set
+            double lineTotal = itemDTO.getLineTotal();
+            if (lineTotal <= 0) {
+                lineTotal = itemDTO.getQuantity() * itemDTO.getUnitPrice();
+            }
+            
             items.add(new BillItem(
                     itemDTO.getId(),
                     itemDTO.getBillId(),
                     itemDTO.getItemId(),
                     itemDTO.getQuantity(),
                     itemDTO.getUnitPrice(),
-                    itemDTO.getLineTotal()
+                    lineTotal
             ));
         }
 
